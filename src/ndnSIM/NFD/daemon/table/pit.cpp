@@ -62,6 +62,11 @@ Pit::Pit(NameTree& nameTree)
 {
 }
 
+Pit::~Pit()
+{
+        std::cout << "m_droppedPackets = " << m_droppedPackets << std::endl;
+}
+
 std::pair<shared_ptr<pit::Entry>, bool>
 Pit::findOrInsert(const Interest& interest, bool allowInsert)
 {
@@ -95,11 +100,12 @@ Pit::findOrInsert(const Interest& interest, bool allowInsert)
   //Newly added coded to drop Interests 
   auto entry = make_shared<pit::Entry>(interest);
 
-  if((sizeof(pit::Entry) * m_nItems) < 14400){
+  if((sizeof(pit::Entry) * m_nItems) < 288){  // 1 entry = 144 byte
     nte->insertPitEntry(entry);
     m_nItems++;
   } else {
     m_droppedPackets++;
+    return {nullptr, false};
   }
 
   /*if((sizeof(pit::Entry) * m_nItems) < 14400){

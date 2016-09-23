@@ -50,6 +50,7 @@ class Pit : noncopyable
 public:
   explicit
   Pit(NameTree& nameTree);
+  ~Pit();
 
   //Return number of missed entries
   size_t

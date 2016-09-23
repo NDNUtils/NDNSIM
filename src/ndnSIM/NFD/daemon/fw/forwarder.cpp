@@ -134,6 +134,15 @@ Forwarder::onIncomingInterest(Face& inFace, const Interest& interest)
   //After PIT size calculation, it judges whether to insert an Interest or not   
   //if(sizeof(pit::Entry)*m_pit.size() < 14400){
   shared_ptr<pit::Entry> pitEntry = m_pit.insert(interest).first;
+
+  // For Debug by woosung 2016/09/22
+  // Handling case null pointer
+  if(pitEntry == nullptr)
+  {
+    std::cout << "Cannot aloocate PIT Table Entry for interest!!." << std::endl;
+    return;
+  }
+
   
   // auto entry = make_shared<pit::Entry>(interest);
   // PIT insert

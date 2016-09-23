@@ -401,19 +401,18 @@ class SimulationThread(threading.Thread):
                 for nodeI in range(ns.network.NodeList.GetNNodes()):
                     num = 0
                     ns3_node = ns.network.NodeList.GetNode(nodeI)
-                    ndnPit = ndn.L3Protocol.getL3Protocol(ns3_node).getForwarder().getPit()
-                    missingPackets = ndn.L3Protocol.getL3Protocol(ns3_node).getForwarder().getPit().missedInt()
+                    ndnPitsize = ndn.L3Protocol.getL3Protocol(ns3_node).getForwarder().getPit().size()
+                    #missingPackets = ndn.L3Protocol.getL3Protocol(ns3_node).getForwarder().getPit().missedInt()
 
-                    if ndnPit is None:
+                    if ndnPitsize is None:
                         return
 
-                    for item in ndnPit:
-                        num += 1
 
-                    text = "Ndn PIT for node %i : PIT counts : %i" %(nodeI, num)
-                    textDropInter = "Dropped Interests for node %i : %i" %(nodeI, missingPackets)
+
+                    text = "Ndn PIT for node %i : PIT counts : %i" %(nodeI, ndnPitsize)
+                    #textDropInter = "Dropped Interests for node %i : %i" %(nodeI, missingPackets)
                     print text
-                    print textDropInter
+                    #print textDropInter
 
 
                     #for item in ndnPit:
