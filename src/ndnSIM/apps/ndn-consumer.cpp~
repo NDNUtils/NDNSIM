@@ -198,7 +198,7 @@ Consumer::SendPacket()
   std::cout << *uidName;*/
 
   interest->setProducerUid("/AB");
-  //std::cout << interest->
+  std::cout << interest->
 
   time::milliseconds interestLifeTime(m_interestLifeTime.GetMilliSeconds());
   interest->setInterestLifetime(interestLifeTime);

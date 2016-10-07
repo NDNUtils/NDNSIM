@@ -116,7 +116,7 @@ Producer::OnInterest(shared_ptr<const Interest> interest)
     data->setProducerUid(interest->getProducerUid());
     NS_LOG_INFO("Producer UID has been set: " << interest->getProducerUid());
   }
-  std::cout<< interest->getProducerUid() <<" is seen!" <<std::endl;
+   //std::cout<< interest->getProducerUid() <<" is seen!" <<std::endl;
 
   
 

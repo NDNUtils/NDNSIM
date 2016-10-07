@@ -103,9 +103,6 @@ public: // getter/setter
   const name::Component&
   getFinalBlockId() const;
 
-  MetaInfo&
-  setFinalBlockId(const name::Component& finalBlockId);
-
   const name::Component&
   getProducerUid() const;
 

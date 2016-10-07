@@ -235,7 +235,7 @@ public: // Name and guiders
 
   Interest& setProducerUid(const std::string& ProducerUid){
      m_ProducerUid = ProducerUid;
-     //m_wire.reset();
+     m_wire.reset();
      return *this;
   }
 

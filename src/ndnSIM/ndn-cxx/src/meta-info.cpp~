@@ -71,7 +71,7 @@ MetaInfo&
 MetaInfo::setProducerUid(const name::Component& producerUid)
 {
   m_wire.reset();
-  m_ProducerUid = producerUid;
+  m_finalBlockId = finalBlockId;
   return *this;
 }
 

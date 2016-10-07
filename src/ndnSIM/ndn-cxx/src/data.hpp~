@@ -347,7 +347,7 @@ protected:
 
 private:
   Name m_name;
-  std::string m_producerUid;
+  string m_producerUid;
   MetaInfo m_metaInfo;
   mutable Block m_content;
   Signature m_signature;

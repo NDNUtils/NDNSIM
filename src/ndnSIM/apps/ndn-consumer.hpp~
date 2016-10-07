@@ -39,7 +39,6 @@
 #include <boost/multi_index/tag.hpp>
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/member.hpp>
-#include <string>
 
 namespace ns3 {
 namespace ndn {
@@ -142,7 +141,7 @@ protected:
 
   Time m_offTime;          ///< \brief Time interval between packets
   Name m_interestName;     ///< \brief NDN Name of the Interest (use Name)
-  std::string m_producerUidOne;    //Producer ID assignment.
+  string m_producerUidOne;    //Producer ID assignment.
   Time m_interestLifeTime; ///< \brief LifeTime for interest packet
 
   /// @cond include_hidden

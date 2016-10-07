@@ -100,7 +100,7 @@ Pit::findOrInsert(const Interest& interest, bool allowInsert)
   //Newly added coded to drop Interests 
   auto entry = make_shared<pit::Entry>(interest);
 
-  if((sizeof(pit::Entry) * m_nItems) < 144000){  // 1 entry = 144 byte
+  if((sizeof(pit::Entry) * m_nItems) < 288){  // 1 entry = 144 byte
     nte->insertPitEntry(entry);
     m_nItems++;
   } else {
