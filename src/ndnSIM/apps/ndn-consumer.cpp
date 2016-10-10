@@ -183,10 +183,10 @@ Consumer::SendPacket()
   shared_ptr<Name> nameWithSequence = make_shared<Name>(m_interestName);
   nameWithSequence->appendSequenceNumber(seq);
 
-  /*Name myName;
+  Name myName;
   myName.append("/AB");  
 
-  shared_ptr<Name> uidName = make_shared<Name>(myName);*/
+  shared_ptr<Name> uidName = make_shared<Name>(myName);
   //
 
   // shared_ptr<Interest> interest = make_shared<Interest> ();
@@ -194,12 +194,12 @@ Consumer::SendPacket()
   interest->setNonce(m_rand->GetValue(0, std::numeric_limits<uint32_t>::max()));
   interest->setName(*nameWithSequence);
 
-  /*interest->setProducerUid(*uidName);
-  std::cout << *uidName;*/
+  interest->setProducerUid(*uidName);
+  std::cout << *uidName << std::endl;
 
-  interest->setProducerUid("/AB");
-  //std::cout << interest->
-
+  //interest->setProducerUid("/AB");
+  //std::cout << interest->getProducerUid() << std::endl;
+  
   time::milliseconds interestLifeTime(m_interestLifeTime.GetMilliSeconds());
   interest->setInterestLifetime(interestLifeTime);
 

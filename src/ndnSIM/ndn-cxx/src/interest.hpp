@@ -227,15 +227,15 @@ public: // Name and guiders
     return m_name;
   }
 
-  const std::string&
+  const Name&
   getProducerUid() const
   {
     return m_ProducerUid;
   }
 
-  Interest& setProducerUid(const std::string& ProducerUid){
+  Interest& setProducerUid(const Name& ProducerUid){
      m_ProducerUid = ProducerUid;
-     //m_wire.reset();
+     m_wire.reset();
      return *this;
   }
 
@@ -470,7 +470,7 @@ private:
   size_t m_selectedDelegationIndex;
   mutable Block m_wire;
 
-  std::string m_ProducerUid;
+  Name m_ProducerUid;
 };
 
 std::ostream&

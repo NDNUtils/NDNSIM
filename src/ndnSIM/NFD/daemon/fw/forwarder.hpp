@@ -38,7 +38,11 @@
 #include "table/dead-nonce-list.hpp"
 #include "table/network-region-table.hpp"
 
+
+
 #include "ns3/ndnSIM/model/cs/ndn-content-store.hpp"
+
+#include <iostream>
 
 namespace nfd {
 

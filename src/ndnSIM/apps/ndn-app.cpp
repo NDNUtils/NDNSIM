@@ -107,6 +107,7 @@ App::OnInterest(shared_ptr<const Interest> interest)
 {
   NS_LOG_FUNCTION(this << interest);
   m_receivedInterests(interest, this, m_face);
+  //std::cout << interest->getProducerUid() << std::endl;
 }
 
 void

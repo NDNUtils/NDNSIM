@@ -212,11 +212,11 @@ public:
   Data&
   setFinalBlockId(const name::Component& producerUid);
 
-  const std::string&
+  const Name&
   getProducerUid() const;
 
   Data&
-  setProducerUid(const std::string& producerUid);
+  setProducerUid(const Name& producerUid);
 
 
   //
@@ -347,7 +347,7 @@ protected:
 
 private:
   Name m_name;
-  std::string m_producerUid;
+  Name m_producerUid;
   MetaInfo m_metaInfo;
   mutable Block m_content;
   Signature m_signature;
@@ -395,7 +395,7 @@ Data::getFinalBlockId() const
   return m_metaInfo.getFinalBlockId();
 }
 
-inline const std::string&
+inline const Name&
 Data::getProducerUid() const
 {
   return m_producerUid;

@@ -60,6 +60,7 @@ LinkService::sendInterest(const Interest& interest)
   ++this->nOutInterests;
 
   doSendInterest(interest);
+  std::cout << "LinkService::"<<__FUNCTION__<<"("<<__LINE__<<") : " << interest.getProducerUid() << std::endl;
 }
 
 void
@@ -92,6 +93,7 @@ LinkService::receiveInterest(const Interest& interest)
   ++this->nInInterests;
 
   afterReceiveInterest(interest);
+  //std::cout << interest.getProducerUid() << std::endl;
 }
 
 void

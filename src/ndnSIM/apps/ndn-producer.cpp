@@ -112,7 +112,7 @@ Producer::OnInterest(shared_ptr<const Interest> interest)
 
   data->setContent(make_shared< ::ndn::Buffer>(m_virtualPayloadSize));
 
-  if(interest->getProducerUid() != ""){
+  if(!interest->getProducerUid().empty()){
     data->setProducerUid(interest->getProducerUid());
     NS_LOG_INFO("Producer UID has been set: " << interest->getProducerUid());
   }

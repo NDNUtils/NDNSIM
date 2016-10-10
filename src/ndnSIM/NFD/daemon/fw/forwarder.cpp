@@ -360,6 +360,7 @@ Forwarder::onOutgoingInterest(shared_ptr<pit::Entry> pitEntry, Face& outFace,
   //cout << "Number of PIT(OnOutGoing): " << m_pit.size() << endl;
 
   // send Interest
+  //std::cout << interest->getProducerUid() << " Forwarder" << std::endl;
   outFace.sendInterest(*interest);
   ++m_counters.nOutInterests;
 }

@@ -29,6 +29,7 @@
 #include "core/counter.hpp"
 #include "transport.hpp"
 #include "face-log.hpp"
+#include <iostream>
 
 namespace nfd {
 namespace face {

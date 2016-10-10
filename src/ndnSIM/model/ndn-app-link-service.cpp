@@ -50,6 +50,7 @@ void
 AppLinkService::doSendInterest(const Interest& interest)
 {
   NS_LOG_FUNCTION(this << &interest);
+ // std::cout << interest.getProducerUid() << std::endl;
 
   // to decouple callbacks
   Simulator::ScheduleNow(&App::OnInterest, m_app, interest.shared_from_this());
@@ -79,6 +80,7 @@ void
 AppLinkService::onReceiveInterest(const Interest& interest)
 {
   this->receiveInterest(interest);
+  //std::cout << interest.getProducerUid() <<std::endl;
 }
 
 void

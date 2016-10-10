@@ -29,6 +29,8 @@
 #include "ns3/callback.h"
 #include "ns3/traced-callback.h"
 
+#include <iostream>
+
 namespace ns3 {
 
 class Packet;

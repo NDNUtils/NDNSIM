@@ -22,6 +22,7 @@
 
 #include "ns3/ndnSIM/model/ndn-common.hpp"
 #include "ns3/ndnSIM/NFD/daemon/face/link-service.hpp"
+#include <iostream>
 
 namespace ns3 {
 

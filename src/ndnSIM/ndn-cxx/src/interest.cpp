@@ -225,6 +225,7 @@ Interest::wireEncode(EncodingImpl<TAG>& encoder) const
   //                InterestLifetime?
   //                Link?
   //                SelectedDelegation?
+  //                ProducerUid? has been added by inchan.  
 
   // (reverse encoding)
 
@@ -261,6 +262,9 @@ Interest::wireEncode(EncodingImpl<TAG>& encoder) const
 
   // Name
   totalLength += getName().wireEncode(encoder);
+
+  //ProducerUid added by inchan
+  //totalLength += getProducerUid().wireEncode(encoder);
 
   totalLength += encoder.prependVarNumber(totalLength);
   totalLength += encoder.prependVarNumber(tlv::Interest);
@@ -304,6 +308,7 @@ Interest::wireDecode(const Block& wire)
   //                InterestLifetime?
   //                Link?
   //                SelectedDelegation?
+  //                ProducerUid??? added by inchan
 
   if (m_wire.type() != tlv::Interest)
     BOOST_THROW_EXCEPTION(Error("Unexpected TLV number when decoding Interest"));
@@ -358,6 +363,9 @@ Interest::wireDecode(const Block& wire)
   else {
     m_selectedDelegationIndex = INVALID_SELECTED_DELEGATION_INDEX;
   }
+
+  // Producer UID has been added by inchan
+  //m_ProducerUid.wireDecode(m_wire.get(tlv::Name));
 }
 
 bool

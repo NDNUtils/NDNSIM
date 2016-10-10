@@ -228,9 +228,9 @@ Data::setFinalBlockId(const name::Component& finalBlockId)
 
 
 Data&
-Data::setProducerUid(const std::string& producerUid)
+Data::setProducerUid(const Name& producerUid)
 {
-  //onChanged();
+  onChanged();
   m_producerUid = producerUid;
   return *this;
 }
