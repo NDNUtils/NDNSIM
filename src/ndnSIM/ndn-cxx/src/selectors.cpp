@@ -37,6 +37,7 @@ Selectors::Selectors()
   , m_maxSuffixComponents(-1)
   , m_childSelector(-1)
   , m_mustBeFresh(false)
+  //, m_pId(-1)
 {
 }
 
@@ -54,6 +55,7 @@ Selectors::empty() const
          m_exclude.empty() &&
          m_childSelector < 0 &&
          !m_mustBeFresh;
+         //m_pId < 0;
 }
 
 template<encoding::Tag TAG>
@@ -71,6 +73,11 @@ Selectors::wireEncode(EncodingImpl<TAG>& encoder) const
   //                 MustBeFresh?
 
   // (reverse encoding)
+
+   //added by Inchan Producer UID
+ /* if(getProducerUID()){
+     totalLength += 
+  }  */
 
   // MustBeFresh
   if (getMustBeFresh()) {

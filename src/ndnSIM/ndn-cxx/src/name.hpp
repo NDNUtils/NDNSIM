@@ -117,8 +117,19 @@ public:
   const Block&
   wireEncode() const;
 
+
   void
   wireDecode(const Block& wire);
+
+
+
+  template<encoding::Tag TAG>
+  size_t
+  wirePuidEncode(EncodingImpl<TAG>& encoder) const;
+ 
+  void
+  wirePuidDecode(const Block& wire);
+
 
   /**
    * @brief Check if already has wire

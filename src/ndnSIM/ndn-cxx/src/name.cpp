@@ -80,11 +80,36 @@ Name::wireEncode(EncodingImpl<TAG>& encoder) const
   return totalLength;
 }
 
+
+template<encoding::Tag TAG>
+size_t
+Name::wirePuidEncode(EncodingImpl<TAG>& encoder) const
+{
+  size_t totalLength = 0;
+
+  for (const_reverse_iterator i = rbegin(); i != rend(); ++i)
+    {
+      totalLength += i->wireEncode(encoder);
+    }
+
+  totalLength += encoder.prependVarNumber(totalLength);
+  totalLength += encoder.prependVarNumber(tlv::ProducerUid);
+  return totalLength;
+}
+
+
+
 template size_t
 Name::wireEncode<encoding::EncoderTag>(EncodingImpl<encoding::EncoderTag>& encoder) const;
 
 template size_t
 Name::wireEncode<encoding::EstimatorTag>(EncodingImpl<encoding::EstimatorTag>& encoder) const;
+
+template size_t
+Name::wirePuidEncode<encoding::EncoderTag>(EncodingImpl<encoding::EncoderTag>& encoder) const;
+
+template size_t
+Name::wirePuidEncode<encoding::EstimatorTag>(EncodingImpl<encoding::EstimatorTag>& encoder) const;
 
 const Block&
 Name::wireEncode() const
@@ -113,6 +138,16 @@ Name::wireDecode(const Block& wire)
   m_nameBlock = wire;
   m_nameBlock.parse();
 }
+
+void Name::wirePuidDecode(const Block& wire) 
+{
+  if (wire.type() != tlv::ProducerUid)
+    BOOST_THROW_EXCEPTION(tlv::Error("Unexpected TLV type when decoding Name name.cpp PUID"));
+
+  m_nameBlock = wire;
+  m_nameBlock.parse();
+}
+
 
 void
 Name::construct(const char* uriOrig)

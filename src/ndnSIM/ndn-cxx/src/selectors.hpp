@@ -129,6 +129,15 @@ public: // getters & setters
   Selectors&
   setMustBeFresh(bool mustBeFresh);
 
+ /* int
+  getProducerUID() const
+  {
+    return m_pId;
+  }
+
+  Selectors&
+  setProducerUid(int pId);  */
+
 public: // EqualityComparable concept
   bool
   operator==(const Selectors& other) const;
@@ -146,6 +155,7 @@ private:
   Exclude m_exclude;
   int m_childSelector;
   bool m_mustBeFresh;
+ // int m_pId;
 
   mutable Block m_wire;
 };

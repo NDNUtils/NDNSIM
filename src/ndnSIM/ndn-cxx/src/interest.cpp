@@ -228,7 +228,10 @@ Interest::wireEncode(EncodingImpl<TAG>& encoder) const
   //                ProducerUid? has been added by inchan.  
 
   // (reverse encoding)
-
+  //ProducerUid added by inchan
+  //Works weirdly
+  totalLength += getProducerUid().wirePuidEncode(encoder);
+  
   if (hasLink()) {
     if (hasSelectedDelegation()) {
       totalLength += prependNonNegativeIntegerBlock(encoder,
@@ -263,8 +266,7 @@ Interest::wireEncode(EncodingImpl<TAG>& encoder) const
   // Name
   totalLength += getName().wireEncode(encoder);
 
-  //ProducerUid added by inchan
-  //totalLength += getProducerUid().wireEncode(encoder);
+  
 
   totalLength += encoder.prependVarNumber(totalLength);
   totalLength += encoder.prependVarNumber(tlv::Interest);
@@ -311,7 +313,9 @@ Interest::wireDecode(const Block& wire)
   //                ProducerUid??? added by inchan
 
   if (m_wire.type() != tlv::Interest)
-    BOOST_THROW_EXCEPTION(Error("Unexpected TLV number when decoding Interest"));
+    BOOST_THROW_EXCEPTION(Error("Unexpected TLV number when decoding Interest interest.cpp"));
+
+  
 
   // Name
   m_name.wireDecode(m_wire.get(tlv::Name));
@@ -364,8 +368,23 @@ Interest::wireDecode(const Block& wire)
     m_selectedDelegationIndex = INVALID_SELECTED_DELEGATION_INDEX;
   }
 
-  // Producer UID has been added by inchan
-  //m_ProducerUid.wireDecode(m_wire.get(tlv::Name));
+  // Producer UID has been added by inchan works weirdly
+  //m_ProducerUid.wireDecode(m_wire.get(tlv::ProducerUid));
+  Block::element_const_iterator pUid = m_wire.find(tlv::ProducerUid);
+  if (val != m_wire.elements_end()) {
+    m_ProducerUid.wirePuidDecode(*pUid);
+  }
+    
+  
+  
+  /*if (pUid != m_wire.elements_end()) {
+    m_ProducerUid.wireDecode(*pUid);
+  }*/
+  
+ /* else
+    m_selectors = Selectors();*/
+
+  
 }
 
 bool
