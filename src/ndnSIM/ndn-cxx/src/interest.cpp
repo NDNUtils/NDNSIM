@@ -371,10 +371,14 @@ Interest::wireDecode(const Block& wire)
   // Producer UID has been added by inchan works weirdly
   //m_ProducerUid.wireDecode(m_wire.get(tlv::ProducerUid));
   Block::element_const_iterator pUid = m_wire.find(tlv::ProducerUid);
-  if (val != m_wire.elements_end()) {
+  if (pUid != m_wire.elements_end()) {
     m_ProducerUid.wirePuidDecode(*pUid);
+    std::cout << __FUNCTION__ << "(" << __LINE__ << ")" << "Get Producer UID..." << std::endl;
   }
-    
+  else
+  {
+    std::cout << __FUNCTION__ << "(" << __LINE__ << ")" << "None Producer UID..." << std::endl;
+  }
   
   
   /*if (pUid != m_wire.elements_end()) {
