@@ -105,8 +105,14 @@ public:
   virtual inline shared_ptr<Data>
   Lookup(shared_ptr<const Interest> interest);
 
+  virtual inline shared_ptr<Data>
+  LookupByPuid(shared_ptr<const Interest> interest);
+
   virtual inline bool
   Add(shared_ptr<const Data> data);
+
+  virtual inline bool
+  AddByPuid(shared_ptr<const Data> data);
 
   // virtual bool
   // Remove (shared_ptr<Interest> header);
@@ -229,13 +235,68 @@ ContentStoreImpl<Policy>::Lookup(shared_ptr<const Interest> interest)
 }
 
 template<class Policy>
+shared_ptr<Data>
+ContentStoreImpl<Policy>::LookupByPuid(shared_ptr<const Interest> interest)
+{
+  NS_LOG_FUNCTION(this << interest->getProducerUid());
+
+  typename super::const_iterator node;
+  if (interest->getExclude().empty()) {
+    node = this->deepest_prefix_match(interest->getProducerUid());
+  }
+  else {
+    node = this->deepest_prefix_match_if_next_level(interest->getProducerUid(),
+                                                    isNotExcluded(interest->getExclude()));
+  }
+
+  if (node != this->end()) {
+    this->m_cacheHitsTrace(interest, node->payload()->GetData());
+
+    shared_ptr<Data> copy = make_shared<Data>(*node->payload()->GetData());
+    return copy;
+  }
+  else {
+    this->m_cacheMissesTrace(interest);
+    return 0;
+  }
+}
+
+template<class Policy>
 bool
 ContentStoreImpl<Policy>::Add(shared_ptr<const Data> data)
 {
   NS_LOG_FUNCTION(this << data->getName());
 
   Ptr<entry> newEntry = Create<entry>(this, data);
-  std::pair<typename super::iterator, bool> result = super::insert(data->getName(), newEntry);
+ 
+  std::pair<typename super::iterator, bool> result = super::insertPuid(data->getName(), newEntry);
+
+  if (result.first != super::end()) {
+    if (result.second) {
+      newEntry->SetTrie(result.first);
+
+      m_didAddEntry(newEntry);
+      return true;
+    }
+    else {
+      // should we do anything?
+      // update payload? add new payload?
+      return false;
+    }
+  }
+  else
+    return false; // cannot insert entry
+}
+
+template<class Policy>
+bool
+ContentStoreImpl<Policy>::AddByPuid(shared_ptr<const Data> data)
+{
+  NS_LOG_FUNCTION(this << data->getProducerUid());
+
+  Ptr<entry> newEntry = Create<entry>(this, data);
+  //Is there any concern about this insert function?
+  std::pair<typename super::iterator, bool> result = super::insert(data->getProducerUid(), newEntry);
 
   if (result.first != super::end()) {
     if (result.second) {

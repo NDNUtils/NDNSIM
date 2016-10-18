@@ -81,6 +81,9 @@ public:
   const Name&
   getName() const;
 
+  const Name&
+  getProducerUid() const;
+
   /** \brief decides whether Interest can be forwarded to face
    *
    *  \return true if OutRecord of this face does not exist or has expired,

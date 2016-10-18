@@ -72,14 +72,24 @@ public:
    *  \return a new or existing entry with same Name and Selectors,
    *          and true for new entry, false for existing entry
    */
+  
+
   std::pair<shared_ptr<pit::Entry>, bool>
   insert(const Interest& interest);
+
+
+  //InsertByPuid added
+  std::pair<shared_ptr<pit::Entry>, bool>
+  insertByPuid(const Interest& interest);
 
   /** \brief performs a Data match
    *  \return an iterable of all PIT entries matching data
    */
   pit::DataMatchResult
   findAllDataMatches(const Data& data) const;
+
+  pit::DataMatchResult
+  findAllDataMatchesByPuid(const Data& data) const;
 
   /**
    *  \brief erases a PIT Entry
@@ -155,6 +165,9 @@ private:
   std::pair<shared_ptr<pit::Entry>, bool>
   findOrInsert(const Interest& interest, bool allowInsert);
 
+  std::pair<shared_ptr<pit::Entry>, bool>
+  findOrInsertByPuid(const Interest& interest, bool allowInsert);
+
 private:
   NameTree& m_nameTree;
   size_t m_nItems;
@@ -188,6 +201,12 @@ inline std::pair<shared_ptr<pit::Entry>, bool>
 Pit::insert(const Interest& interest)
 {
   return this->findOrInsert(interest, true);
+}
+
+inline std::pair<shared_ptr<pit::Entry>, bool>
+Pit::insertByPuid(const Interest& interest)
+{
+  return this->findOrInsertByPuid(interest, true);
 }
 
 inline Pit::const_iterator

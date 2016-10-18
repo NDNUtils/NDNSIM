@@ -151,6 +151,7 @@ NameTree::~NameTree()
 }
 
 // insert() is a private function, and called by only lookup()
+//I think Puid will be inserted with this function.
 std::pair<shared_ptr<name_tree::Entry>, bool>
 NameTree::insert(const Name& prefix)
 {
@@ -333,6 +334,22 @@ NameTree::get(const pit::Entry& pitEntry)
   return this->lookup(pitEntry.getName());
 }
 
+//Find by Puid. I need verify whether nte would really work in this way.
+shared_ptr<name_tree::Entry>
+NameTree::getByPuid(const pit::Entry& pitEntry)
+{
+  shared_ptr<name_tree::Entry> nte = pitEntry.m_nameTreeEntry;
+  if (nte->getPrefix().size() == pitEntry.getProducerUid().size()) {
+    return nte;
+  }
+
+  BOOST_ASSERT(pitEntry.getProducerUid().at(-1).isImplicitSha256Digest());
+  BOOST_ASSERT(nte->getPrefix() == pitEntry.getProducerUid().getPrefix(-1));
+  return this->lookup(pitEntry.getProducerUid());
+}
+
+
+
 // Exact Match
 shared_ptr<name_tree::Entry>
 NameTree::findExactMatch(const Name& prefix) const
@@ -417,6 +434,7 @@ NameTree::findLongestPrefixMatch(shared_ptr<name_tree::Entry> entry,
   return shared_ptr<name_tree::Entry>();
 }
 
+//GetPrefix() must be examined
 shared_ptr<name_tree::Entry>
 NameTree::findLongestPrefixMatch(const pit::Entry& pitEntry) const
 {
@@ -430,6 +448,24 @@ NameTree::findLongestPrefixMatch(const pit::Entry& pitEntry) const
   shared_ptr<name_tree::Entry> exact = this->findExactMatch(pitEntry.getName());
   return exact == nullptr ? nte : exact;
 }
+
+//GetProducerUid version and getPrefix() 
+shared_ptr<name_tree::Entry>
+NameTree::findLongestPrefixMatchByPuid(const pit::Entry& pitEntry) const
+{
+  shared_ptr<name_tree::Entry> nte = pitEntry.m_nameTreeEntry;
+  if (nte->getPrefix().size() == pitEntry.getProducerUid().size()) {
+    return nte;
+  }
+
+  BOOST_ASSERT(pitEntry.getProducerUid().at(-1).isImplicitSha256Digest());
+  BOOST_ASSERT(nte->getPrefix() == pitEntry.getProducerUid().getPrefix(-1));
+  shared_ptr<name_tree::Entry> exact = this->findExactMatch(pitEntry.getProducerUid());
+  return exact == nullptr ? nte : exact;
+}
+
+
+
 
 boost::iterator_range<NameTree::const_iterator>
 NameTree::findAllMatches(const Name& prefix,

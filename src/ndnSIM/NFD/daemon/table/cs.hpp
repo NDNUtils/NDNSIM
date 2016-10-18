@@ -73,6 +73,9 @@ public:
   void
   insert(const Data& data, bool isUnsolicited = false);
 
+  void 
+  insertPuid(const Data& data, bool isUnsolicited = false);
+
   typedef std::function<void(const Interest&, const Data& data)> HitCallback;
   typedef std::function<void(const Interest&)> MissCallback;
 
@@ -85,6 +88,11 @@ public:
    */
   void
   find(const Interest& interest,
+       const HitCallback& hitCallback,
+       const MissCallback& missCallback) const;
+
+  void 
+  findPuid(const Interest& interest,
        const HitCallback& hitCallback,
        const MissCallback& missCallback) const;
 
@@ -170,6 +178,9 @@ private: // find
    */
   iterator
   findRightmost(const Interest& interest, iterator first, iterator last) const;
+
+  iterator
+  findRightmostPuid(const Interest& interest, iterator first, iterator last) const;
 
   /** \brief find rightmost match among entries with exact Names in [first,last)
    *  \return the rightmost match, or last if not found

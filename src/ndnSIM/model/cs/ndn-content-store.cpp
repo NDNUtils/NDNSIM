@@ -68,6 +68,12 @@ Entry::GetName() const
   return m_data->getName();
 }
 
+const Name&
+Entry::GetProducerUid() const
+{
+  return m_data->getProducerUid();
+}
+
 shared_ptr<const Data>
 Entry::GetData() const
 {

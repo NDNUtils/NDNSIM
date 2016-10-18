@@ -43,6 +43,14 @@ Entry::getName() const
   return m_interest->getName();
 }
 
+const Name&
+Entry::getProducerUid() const
+{
+  return m_interest->getProducerUid();
+}
+
+
+
 bool
 Entry::hasLocalInRecord() const
 {

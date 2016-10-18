@@ -135,6 +135,77 @@ Pit::findOrInsert(const Interest& interest, bool allowInsert)
   return {entry, true};
 }
 
+//FindOrInsert by Puid
+std::pair<shared_ptr<pit::Entry>, bool>
+Pit::findOrInsertByPuid(const Interest& interest, bool allowInsert)
+{
+  // ensure NameTree entry exists
+  const Name& name = interest.getProducerUid();
+  bool isEndWithDigest = name.size() > 0 && name[-1].isImplicitSha256Digest();
+  shared_ptr<name_tree::Entry> nte = m_nameTree.lookup(isEndWithDigest ? name.getPrefix(-1) : name);
+  BOOST_ASSERT(nte != nullptr);
+  size_t nteNameLen = nte->getPrefix().size();
+
+  // check if PIT entry already exists
+  // A pit entry size is 144.
+  // total size 14400 for 100 entries.
+  const std::vector<shared_ptr<pit::Entry>>& pitEntries = nte->getPitEntries();
+  cout << "Size of PIT entries : " << (sizeof(pit::Entry) * m_nItems) << endl;
+  auto it = std::find_if(pitEntries.begin(), pitEntries.end(),
+    [&interest, nteNameLen] (const shared_ptr<pit::Entry>& entry) -> bool {
+      // initial part of the name is guaranteed to be the same
+      BOOST_ASSERT(entry->getInterest().getName().compare(0, nteNameLen,
+                   interest.getProducerUid(), 0, nteNameLen) == 0);
+      // compare implicit digest (or its absence) only
+      return entry->getInterest().getProducerUid().compare(nteNameLen, Name::npos,
+                                                    interest.getProducerUid(), nteNameLen) == 0 &&
+             entry->getInterest().getSelectors() == interest.getSelectors();
+    });
+
+  if (it != pitEntries.end()) {
+    return {*it, false};
+  }
+  
+  //Newly added coded to drop Interests 
+  auto entry = make_shared<pit::Entry>(interest);
+
+  if((sizeof(pit::Entry) * m_nItems) < 144000){  // 1 entry = 144 byte
+    nte->insertPitEntry(entry);
+    m_nItems++;
+  } else {
+    m_droppedPackets++;
+    return {nullptr, false};
+  }
+
+  /*if((sizeof(pit::Entry) * m_nItems) < 14400){
+    nte->insertPitEntry(entry);
+    m_nItems++;
+  } else {
+    allowInsert = false;
+  }*/
+
+
+  if (!allowInsert) {
+    return {nullptr, true};
+  }
+
+/*
+  auto entry = make_shared<pit::Entry>(interest);
+  nte->insertPitEntry(entry);
+  m_nItems++;*/
+  
+  /*
+  if((sizeof(pit::Entry) * m_nItems) < 14400){
+        auto entry = *pitEntries.end();
+        erase(entry);
+  }*/
+
+
+  return {entry, true};
+}
+
+
+
 pit::DataMatchResult
 Pit::findAllDataMatches(const Data& data) const
 {
@@ -151,6 +222,26 @@ Pit::findAllDataMatches(const Data& data) const
 
   return matches;
 }
+
+//find all data matches by producer Uid
+pit::DataMatchResult
+Pit::findAllDataMatchesByPuid(const Data& data) const
+{
+  auto&& ntMatches = m_nameTree.findAllMatches(data.getProducerUid(),
+    [] (const name_tree::Entry& entry) { return entry.hasPitEntries(); });
+
+  pit::DataMatchResult matches;
+  for (const name_tree::Entry& nte : ntMatches) {
+    for (const shared_ptr<pit::Entry>& pitEntry : nte.getPitEntries()) {
+      if (pitEntry->getInterest().matchesData(data))
+        matches.emplace_back(pitEntry);
+    }
+  }
+
+  return matches;
+}
+
+
 
 void
 Pit::erase(shared_ptr<pit::Entry> pitEntry)

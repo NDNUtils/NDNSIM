@@ -105,12 +105,17 @@ Forwarder::startProcessNack(Face& face, const lp::Nack& nack)
   this->onIncomingNack(face, nack);
 }
 
+//This function is changed due to insertion of PUID insert in PIT.. Added by inchan oct. 18th, 2016
 void
 Forwarder::onIncomingInterest(Face& inFace, const Interest& interest)
 {
   // receive Interest
   NFD_LOG_DEBUG("onIncomingInterest face=" << inFace.getId() <<
                 " interest=" << interest.getName());
+  
+  NFD_LOG_DEBUG("onIncomingInterest face=" << inFace.getId() <<
+                " interest with PUID = " << interest.getProducerUid());
+
   interest.setTag(make_shared<lp::IncomingFaceIdTag>(inFace.getId()));
   ++m_counters.nInInterests;
 
@@ -133,7 +138,7 @@ Forwarder::onIncomingInterest(Face& inFace, const Interest& interest)
   }
   //After PIT size calculation, it judges whether to insert an Interest or not   
   //if(sizeof(pit::Entry)*m_pit.size() < 14400){
-  shared_ptr<pit::Entry> pitEntry = m_pit.insert(interest).first;
+  shared_ptr<pit::Entry> pitEntry = m_pit.insertByPuid(interest).first;
 
   // For Debug by woosung 2016/09/22
   // Handling case null pointer
@@ -163,16 +168,19 @@ Forwarder::onIncomingInterest(Face& inFace, const Interest& interest)
   this->cancelUnsatisfyAndStragglerTimer(pitEntry);
 
   // is pending?
+  
   const pit::InRecordCollection& inRecords = pitEntry->getInRecords();
   bool isPending = inRecords.begin() != inRecords.end();
   if (!isPending) {
     if (m_csFromNdnSim == nullptr) {
-      m_cs.find(interest,
+      //PUID find function 
+      m_cs.findPuid(interest,
                 bind(&Forwarder::onContentStoreHit, this, ref(inFace), pitEntry, _1, _2),
                 bind(&Forwarder::onContentStoreMiss, this, ref(inFace), pitEntry, _1));
     }
     else {
-      shared_ptr<Data> match = m_csFromNdnSim->Lookup(interest.shared_from_this());
+        //Lookup method is added by PUID
+      shared_ptr<Data> match = m_csFromNdnSim->LookupByPuid(interest.shared_from_this());
       if (match != nullptr) {
         this->onContentStoreHit(inFace, pitEntry, interest, *match);
       }
@@ -417,6 +425,7 @@ Forwarder::onIncomingData(Face& inFace, const Data& data)
 {
   // receive Data
   NFD_LOG_DEBUG("onIncomingData face=" << inFace.getId() << " data=" << data.getName());
+  NFD_LOG_DEBUG("onIncomingData face=" << inFace.getId() << " data=" << data.getProducerUid());
   data.setTag(make_shared<lp::IncomingFaceIdTag>(inFace.getId()));
   ++m_counters.nInData;
 
@@ -431,7 +440,8 @@ Forwarder::onIncomingData(Face& inFace, const Data& data)
   }
 
   // PIT match
-  pit::DataMatchResult pitMatches = m_pit.findAllDataMatches(data);
+  //PIT match by PUID
+  pit::DataMatchResult pitMatches = m_pit.findAllDataMatchesByPuid(data);
   if (pitMatches.begin() == pitMatches.end()) {
     // goto Data unsolicited pipeline
     this->onDataUnsolicited(inFace, data);
@@ -448,15 +458,17 @@ Forwarder::onIncomingData(Face& inFace, const Data& data)
   dataCopyWithoutPacket->removeTag<ns3::ndn::Ns3PacketTag>();
 
   // CS insert
+  //CS insert by PUID
   if (m_csFromNdnSim == nullptr)
-    m_cs.insert(*dataCopyWithoutPacket);
+    m_cs.insertPuid(*dataCopyWithoutPacket);
   else
-    m_csFromNdnSim->Add(dataCopyWithoutPacket);
+    m_csFromNdnSim->AddByPuid(dataCopyWithoutPacket);
 
   std::set<Face*> pendingDownstreams;
   // foreach PitEntry
   for (const shared_ptr<pit::Entry>& pitEntry : pitMatches) {
     NFD_LOG_DEBUG("onIncomingData matching=" << pitEntry->getName());
+    NFD_LOG_DEBUG("onIncomingData matching=" << pitEntry->getProducerUid());
 
     // cancel unsatisfy & straggler timer
     this->cancelUnsatisfyAndStragglerTimer(pitEntry);
@@ -502,10 +514,11 @@ Forwarder::onDataUnsolicited(Face& inFace, const Data& data)
   bool acceptToCache = inFace.getScope() == ndn::nfd::FACE_SCOPE_LOCAL;
   if (acceptToCache) {
     // CS insert
+    // CS insert by PUID
     if (m_csFromNdnSim == nullptr)
-      m_cs.insert(data, true);
+      m_cs.insertPuid(data, true);
     else
-      m_csFromNdnSim->Add(data.shared_from_this());
+      m_csFromNdnSim->AddByPuid(data.shared_from_this());
   }
 
   NFD_LOG_DEBUG("onDataUnsolicited face=" << inFace.getId() <<
@@ -539,6 +552,8 @@ Forwarder::onOutgoingData(const Data& data, Face& outFace)
   ++m_counters.nOutData;
 }
 
+
+//There is no Nack packet Modification yet. Should PUID included in NACK packet
 void
 Forwarder::onIncomingNack(Face& inFace, const lp::Nack& nack)
 {

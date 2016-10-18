@@ -147,6 +147,8 @@ public: // shortcut access
   shared_ptr<name_tree::Entry>
   get(const pit::Entry& pitEntry);
 
+  shared_ptr<name_tree::Entry>
+  getByPuid(const pit::Entry& pitEntry);
   /** \brief get NameTree entry from Measurements entry
    *
    *  This is equivalent to .lookup(measurementsEntry.getName())
@@ -191,6 +193,10 @@ public: // matching
    */
   shared_ptr<name_tree::Entry>
   findLongestPrefixMatch(const pit::Entry& pitEntry) const;
+
+  //puid prefix match added
+  shared_ptr<name_tree::Entry>
+  findLongestPrefixMatchByPuid(const pit::Entry& pitEntry) const;
 
   /** \brief Enumerate all the name prefixes that satisfy the prefix and entrySelector
    *  \return an unspecified type that have .begin() and .end() methods

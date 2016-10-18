@@ -118,6 +118,50 @@ Cs::insert(const Data& data, bool isUnsolicited)
   }
 }
 
+
+//insertByPuid Not a name is mentioned here. You must find where to insert PUID rather than full NDN name. Look carefully at Table.cpp/table.hpp
+void
+Cs::insertPuid(const Data& data, bool isUnsolicited)
+{
+  NFD_LOG_DEBUG("insert Puid " << data.getProducerUid());
+
+  if (m_policy->getLimit() == 0) {
+    // shortcut for disabled CS
+    return;
+  }
+
+  // recognize CachePolicy
+  shared_ptr<lp::CachePolicyTag> tag = data.getTag<lp::CachePolicyTag>();
+  if (tag != nullptr) {
+    lp::CachePolicyType policy = tag->get().getPolicy();
+    if (policy == lp::CachePolicyType::NO_CACHE) {
+      return;
+    }
+  }
+
+  bool isNewEntry = false;
+  iterator it;
+  // use .insert because gcc46 does not support .emplace
+  std::tie(it, isNewEntry) = m_table.insert(EntryImpl(data.shared_from_this(), isUnsolicited));
+  EntryImpl& entry = const_cast<EntryImpl&>(*it);
+
+  entry.updateStaleTime();
+
+  if (!isNewEntry) { // existing entry
+    // XXX This doesn't forbid unsolicited Data from refreshing a solicited entry.
+    if (entry.isUnsolicited() && !isUnsolicited) {
+      entry.unsetUnsolicited();
+    }
+
+    m_policy->afterRefresh(it);
+  }
+  else {
+    m_policy->afterInsert(it);
+  }
+}
+
+
+
 void
 Cs::find(const Interest& interest,
          const HitCallback& hitCallback,
@@ -153,6 +197,44 @@ Cs::find(const Interest& interest,
   m_policy->beforeUse(match);
   hitCallback(interest, match->getData());
 }
+
+//find by Puid
+void
+Cs::findPuid(const Interest& interest,
+         const HitCallback& hitCallback,
+         const MissCallback& missCallback) const
+{
+  BOOST_ASSERT(static_cast<bool>(hitCallback));
+  BOOST_ASSERT(static_cast<bool>(missCallback));
+
+  const Name& prefix = interest.getProducerUid();
+  bool isRightmost = interest.getChildSelector() == 1;
+  NFD_LOG_DEBUG("find " << prefix << (isRightmost ? " R" : " L"));
+
+  iterator first = m_table.lower_bound(prefix);
+  iterator last = m_table.end();
+  if (prefix.size() > 0) {
+    last = m_table.lower_bound(prefix.getSuccessor());
+  }
+
+  iterator match = last;
+  if (isRightmost) {
+    match = this->findRightmost(interest, first, last);
+  }
+  else {
+    match = this->findLeftmost(interest, first, last);
+  }
+
+  if (match == last) {
+    NFD_LOG_DEBUG("  no-match");
+    missCallback(interest);
+    return;
+  }
+  NFD_LOG_DEBUG("  matching " << match->getProducerUid());
+  m_policy->beforeUse(match);
+  hitCallback(interest, match->getData());
+}
+
 
 iterator
 Cs::findLeftmost(const Interest& interest, iterator first, iterator last) const
@@ -191,6 +273,40 @@ Cs::findRightmost(const Interest& interest, iterator first, iterator last) const
   }
   return last;
 }
+
+iterator
+Cs::findRightmostPuid(const Interest& interest, iterator first, iterator last) const
+{
+  // Each loop visits a sub-namespace under a prefix one component longer than Interest Name.
+  // If there is a match in that sub-namespace, the leftmost match is returned;
+  // otherwise, loop continues.
+
+  size_t interestNameLength = interest.getProducerUid().size();
+  for (iterator right = last; right != first;) {
+    iterator prev = std::prev(right);
+
+    // special case: [first,prev] have exact Names
+    if (prev->getProducerUid().size() == interestNameLength) {
+      NFD_LOG_TRACE("  find-among-exact " << prev->getName());
+      iterator matchExact = this->findRightmostAmongExact(interest, first, right);
+      return matchExact == right ? last : matchExact;
+    }
+
+    Name prefix = prev->getProducerUid().getPrefix(interestNameLength + 1);
+    iterator left = m_table.lower_bound(prefix);
+
+    // normal case: [left,right) are under one-component-longer prefix
+    NFD_LOG_TRACE("  find-under-prefix " << prefix);
+    iterator match = this->findLeftmost(interest, left, right);
+    if (match != right) {
+      return match;
+    }
+    right = left;
+  }
+  return last;
+}
+
+
 
 iterator
 Cs::findRightmostAmongExact(const Interest& interest, iterator first, iterator last) const

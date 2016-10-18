@@ -71,6 +71,9 @@ public:
   const Name&
   GetName() const;
 
+  const Name&
+  GetProducerUid() const;
+
   /**
    * \brief Get Data of the stored entry
    * \returns Data of the stored entry
@@ -123,12 +126,18 @@ public:
   virtual shared_ptr<Data>
   Lookup(shared_ptr<const Interest> interest) = 0;
 
+  virtual shared_ptr<Data>
+  LookupByPuid(shared_ptr<const Interest> interest) = 0;
+
   /**
    * \brief Add a new content to the content store.
    * \returns true if an existing entry was updated, false otherwise
    */
   virtual bool
   Add(shared_ptr<const Data> data) = 0;
+
+  virtual bool
+  AddByPuid(shared_ptr<const Data> data) = 0;
 
   // /*
   //  * \brief Add a new content to the content store.

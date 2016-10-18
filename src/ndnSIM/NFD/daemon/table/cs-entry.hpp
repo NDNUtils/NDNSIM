@@ -55,6 +55,14 @@ public: // exposed through ContentStore enumeration
     BOOST_ASSERT(this->hasData());
     return m_data->getName();
   }
+ 
+  //Producer Uid
+  const Name&
+  getProducerUid() const
+  {
+    BOOST_ASSERT(this->hasData());
+    return m_data->getProducerUid();
+  }
 
   /** \return full name (including implicit digest) of the stored Data
    *  \pre hasData()
