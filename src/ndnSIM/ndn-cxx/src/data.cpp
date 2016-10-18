@@ -60,6 +60,9 @@ Data::wireEncode(EncodingImpl<TAG>& encoder, bool unsignedPortion/* = false*/) c
   //            Signature
 
   // (reverse encoding)
+  // Producer UID data packet
+  //Producer UID packet
+  totalLength += getProducerUid().wirePuidEncode(encoder);
 
   if (!unsignedPortion && !m_signature)
     {
@@ -164,6 +167,18 @@ Data::wireDecode(const Block& wire)
   Block::element_const_iterator val = m_wire.find(tlv::SignatureValue);
   if (val != m_wire.elements_end())
     m_signature.setValue(*val);
+
+  // Producer UID
+  Block::element_const_iterator pUid = m_wire.find(tlv::ProducerUid);
+  if (pUid != m_wire.elements_end()) {
+    m_producerUid.wirePuidDecode(*pUid);
+    std::cout << __FUNCTION__ << "(" << __LINE__ << ")" << "  Get Producer UID from data packet" << std::endl;
+  }
+  else
+  {
+    std::cout << __FUNCTION__ << "(" << __LINE__ << ")" << "  None Producer UID from data packet" << std::endl;
+  }
+  
 }
 
 Data&

@@ -115,8 +115,9 @@ Producer::OnInterest(shared_ptr<const Interest> interest)
   if(!interest->getProducerUid().empty()){
     data->setProducerUid(interest->getProducerUid());
     NS_LOG_INFO("Producer UID has been set: " << interest->getProducerUid());
+    std::cout << "Producer UID has been set: " << data -> getProducerUid() << std::endl;
   }
-  std::cout<< interest->getProducerUid() <<" is seen!" <<std::endl;
+  //std::cout<< interest->getProducerUid() <<" is seen!" <<std::endl;
 
   
 

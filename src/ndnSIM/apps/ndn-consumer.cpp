@@ -34,6 +34,7 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/ref.hpp>
+#include <iostream>
 
 NS_LOG_COMPONENT_DEFINE("ndn.Consumer");
 
@@ -184,7 +185,7 @@ Consumer::SendPacket()
   nameWithSequence->appendSequenceNumber(seq);
 
   Name myName;
-  myName.append("/AB");  
+  myName.append("AB");  
 
   shared_ptr<Name> uidName = make_shared<Name>(myName);
   //
@@ -224,6 +225,10 @@ Consumer::OnData(shared_ptr<const Data> data)
   if (!m_active)
     return;
 
+  if(!data->getProducerUid().empty()){
+     std::cout << "Producer UID arrived in consumer : " << data->getProducerUid() << std::endl;
+  }
+
   App::OnData(data); // tracing inside
 
   NS_LOG_FUNCTION(this << data);
@@ -253,6 +258,8 @@ Consumer::OnData(shared_ptr<const Data> data)
   if (entry != m_seqFullDelay.end()) {
     m_firstInterestDataDelay(this, seq, Simulator::Now() - entry->time, m_seqRetxCounts[seq], hopCount);
   }
+
+  
 
   m_seqRetxCounts.erase(seq);
   m_seqFullDelay.erase(seq);
