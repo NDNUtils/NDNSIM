@@ -105,14 +105,14 @@ public:
   virtual inline shared_ptr<Data>
   Lookup(shared_ptr<const Interest> interest);
 
-  virtual inline shared_ptr<Data>
-  LookupByPuid(shared_ptr<const Interest> interest);
+  /*virtual inline shared_ptr<Data>
+  LookupByPuid(shared_ptr<const Interest> interest);*/
 
   virtual inline bool
   Add(shared_ptr<const Data> data);
 
-  virtual inline bool
-  AddByPuid(shared_ptr<const Data> data);
+  /*virtual inline bool
+  AddByPuid(shared_ptr<const Data> data);*/
 
   // virtual bool
   // Remove (shared_ptr<Interest> header);
@@ -234,7 +234,7 @@ ContentStoreImpl<Policy>::Lookup(shared_ptr<const Interest> interest)
   }
 }
 
-template<class Policy>
+/*template<class Policy>
 shared_ptr<Data>
 ContentStoreImpl<Policy>::LookupByPuid(shared_ptr<const Interest> interest)
 {
@@ -259,7 +259,7 @@ ContentStoreImpl<Policy>::LookupByPuid(shared_ptr<const Interest> interest)
     this->m_cacheMissesTrace(interest);
     return 0;
   }
-}
+}*/
 
 template<class Policy>
 bool
@@ -269,7 +269,7 @@ ContentStoreImpl<Policy>::Add(shared_ptr<const Data> data)
 
   Ptr<entry> newEntry = Create<entry>(this, data);
  
-  std::pair<typename super::iterator, bool> result = super::insertPuid(data->getName(), newEntry);
+  std::pair<typename super::iterator, bool> result = super::insert(data->getName(), newEntry);
 
   if (result.first != super::end()) {
     if (result.second) {
@@ -288,7 +288,7 @@ ContentStoreImpl<Policy>::Add(shared_ptr<const Data> data)
     return false; // cannot insert entry
 }
 
-template<class Policy>
+/*template<class Policy>
 bool
 ContentStoreImpl<Policy>::AddByPuid(shared_ptr<const Data> data)
 {
@@ -296,7 +296,7 @@ ContentStoreImpl<Policy>::AddByPuid(shared_ptr<const Data> data)
 
   Ptr<entry> newEntry = Create<entry>(this, data);
   //Is there any concern about this insert function?
-  std::pair<typename super::iterator, bool> result = super::insert(data->getProducerUid(), newEntry);
+  std::pair<typename super::iterator, bool> result = super::insertByPuid(data->getProducerUid(), newEntry);
 
   if (result.first != super::end()) {
     if (result.second) {
@@ -313,7 +313,7 @@ ContentStoreImpl<Policy>::AddByPuid(shared_ptr<const Data> data)
   }
   else
     return false; // cannot insert entry
-}
+}*/
 
 template<class Policy>
 void

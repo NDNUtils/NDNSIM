@@ -138,8 +138,10 @@ Forwarder::onIncomingInterest(Face& inFace, const Interest& interest)
   }
   //After PIT size calculation, it judges whether to insert an Interest or not   
   //if(sizeof(pit::Entry)*m_pit.size() < 14400){
-  shared_ptr<pit::Entry> pitEntry = m_pit.insertByPuid(interest).first;
 
+  shared_ptr<pit::Entry> pitEntry = m_pit.insert(interest).first;
+
+  //shared_ptr<pit::Entry> pitEntry = m_pit.insertByPuid(interest).first;
   // For Debug by woosung 2016/09/22
   // Handling case null pointer
   if(pitEntry == nullptr)
@@ -174,13 +176,18 @@ Forwarder::onIncomingInterest(Face& inFace, const Interest& interest)
   if (!isPending) {
     if (m_csFromNdnSim == nullptr) {
       //PUID find function 
-      m_cs.findPuid(interest,
+      m_cs.find(interest,
                 bind(&Forwarder::onContentStoreHit, this, ref(inFace), pitEntry, _1, _2),
                 bind(&Forwarder::onContentStoreMiss, this, ref(inFace), pitEntry, _1));
+     
+      /*m_cs.findPuid(interest,
+                bind(&Forwarder::onContentStoreHit, this, ref(inFace), pitEntry, _1, _2),
+                bind(&Forwarder::onContentStoreMiss, this, ref(inFace), pitEntry, _1));*/
     }
     else {
         //Lookup method is added by PUID
-      shared_ptr<Data> match = m_csFromNdnSim->LookupByPuid(interest.shared_from_this());
+      shared_ptr<Data> match = m_csFromNdnSim->Lookup(interest.shared_from_this());
+      //shared_ptr<Data> match = m_csFromNdnSim->LookupByPuid(interest.shared_from_this());
       if (match != nullptr) {
         this->onContentStoreHit(inFace, pitEntry, interest, *match);
       }
@@ -441,7 +448,8 @@ Forwarder::onIncomingData(Face& inFace, const Data& data)
 
   // PIT match
   //PIT match by PUID
-  pit::DataMatchResult pitMatches = m_pit.findAllDataMatchesByPuid(data);
+  pit::DataMatchResult pitMatches = m_pit.findAllDataMatches(data);
+  //pit::DataMatchResult pitMatches = m_pit.findAllDataMatchesByPuid(data);
   if (pitMatches.begin() == pitMatches.end()) {
     // goto Data unsolicited pipeline
     this->onDataUnsolicited(inFace, data);
@@ -460,9 +468,11 @@ Forwarder::onIncomingData(Face& inFace, const Data& data)
   // CS insert
   //CS insert by PUID
   if (m_csFromNdnSim == nullptr)
-    m_cs.insertPuid(*dataCopyWithoutPacket);
+    m_cs.insert(*dataCopyWithoutPacket);
+    //m_cs.insertPuid(*dataCopyWithoutPacket);
   else
-    m_csFromNdnSim->AddByPuid(dataCopyWithoutPacket);
+    m_csFromNdnSim->Add(dataCopyWithoutPacket);
+    //m_csFromNdnSim->AddByPuid(dataCopyWithoutPacket);
 
   std::set<Face*> pendingDownstreams;
   // foreach PitEntry
@@ -516,13 +526,18 @@ Forwarder::onDataUnsolicited(Face& inFace, const Data& data)
     // CS insert
     // CS insert by PUID
     if (m_csFromNdnSim == nullptr)
-      m_cs.insertPuid(data, true);
+      m_cs.insert(data, true);
+      //m_cs.insertPuid(data, true);
     else
-      m_csFromNdnSim->AddByPuid(data.shared_from_this());
+      m_csFromNdnSim->Add(data.shared_from_this());
+      //m_csFromNdnSim->AddByPuid(data.shared_from_this());
   }
 
   NFD_LOG_DEBUG("onDataUnsolicited face=" << inFace.getId() <<
                 " data=" << data.getName() <<
+                (acceptToCache ? " cached" : " not cached"));
+  NFD_LOG_DEBUG("onDataUnsolicited face=" << inFace.getId() <<
+                " data=" << data.getProducerUid() <<
                 (acceptToCache ? " cached" : " not cached"));
 }
 

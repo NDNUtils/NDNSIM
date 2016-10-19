@@ -184,10 +184,11 @@ Consumer::SendPacket()
   shared_ptr<Name> nameWithSequence = make_shared<Name>(m_interestName);
   nameWithSequence->appendSequenceNumber(seq);
 
+  //Add PUID number and add sequence number.
   Name myName;
-  myName.append("AB");  
-
+  myName.append("AB");
   shared_ptr<Name> uidName = make_shared<Name>(myName);
+  uidName->appendSequenceNumber(seq); 
   //
 
   // shared_ptr<Interest> interest = make_shared<Interest> ();
@@ -196,8 +197,8 @@ Consumer::SendPacket()
   interest->setName(*nameWithSequence);
 
   interest->setProducerUid(*uidName);
-  std::cout << *uidName << std::endl;
-
+  std::cout << "PUID name " << *uidName << std::endl;
+  std::cout << "NDN name " << *nameWithSequence << std::endl;
   //interest->setProducerUid("/AB");
   //std::cout << interest->getProducerUid() << std::endl;
   
