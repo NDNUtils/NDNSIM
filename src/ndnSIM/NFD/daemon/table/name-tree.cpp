@@ -490,6 +490,29 @@ NameTree::findAllMatches(const Name& prefix,
 }
 
 boost::iterator_range<NameTree::const_iterator>
+NameTree::findAllMatchesByPuid(const Name& prefix,
+                         const name_tree::EntrySelector& entrySelector) const
+{
+  NFD_LOG_TRACE("NameTree::findAllMatchesByPuid" << prefix);
+
+  // As we are using Name Prefix Hash Table, and the current LPM() is
+  // implemented as starting from full name, and reduce the number of
+  // components by 1 each time, we could use it here.
+  // For trie-like design, it could be more efficient by walking down the
+  // trie from the root node.
+
+  shared_ptr<name_tree::Entry> entry = findLongestPrefixMatch(prefix, entrySelector);
+
+  if (static_cast<bool>(entry)) {
+    const_iterator begin(FIND_ALL_MATCHES_TYPE, *this, entry, entrySelector);
+    return {begin, end()};
+  }
+  // If none of the entry satisfies the requirements, then return the end() iterator.
+  return {end(), end()};
+}
+
+
+boost::iterator_range<NameTree::const_iterator>
 NameTree::fullEnumerate(const name_tree::EntrySelector& entrySelector) const
 {
   NFD_LOG_TRACE("fullEnumerate");

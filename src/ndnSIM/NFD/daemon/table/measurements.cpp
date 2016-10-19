@@ -80,6 +80,8 @@ Measurements::get(const fib::Entry& fibEntry)
 shared_ptr<Entry>
 Measurements::get(const pit::Entry& pitEntry)
 {
+  //PUID may be used over here.
+  //Addtional methods must be used 
   shared_ptr<name_tree::Entry> nte = m_nameTree.get(pitEntry);
 
   BOOST_ASSERT(nte != nullptr);

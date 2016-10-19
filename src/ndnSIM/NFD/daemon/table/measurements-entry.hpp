@@ -54,8 +54,12 @@ public:
   const Name&
   getName() const;
 
+  const Name&
+  getProducerUid() const;
+
 private:
   Name m_name;
+  Name m_producerUid;
 
 private: // lifetime
   time::steady_clock::TimePoint m_expiry;
@@ -71,6 +75,12 @@ inline const Name&
 Entry::getName() const
 {
   return m_name;
+}
+
+inline const Name&
+Entry::getProducerUid() const
+{
+  return m_producerUid;
 }
 
 } // namespace measurements

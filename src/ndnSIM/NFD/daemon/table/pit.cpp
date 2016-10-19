@@ -154,7 +154,7 @@ Pit::findOrInsertByPuid(const Interest& interest, bool allowInsert)
   auto it = std::find_if(pitEntries.begin(), pitEntries.end(),
     [&interest, nteNameLen] (const shared_ptr<pit::Entry>& entry) -> bool {
       // initial part of the name is guaranteed to be the same
-      BOOST_ASSERT(entry->getInterest().getName().compare(0, nteNameLen,
+      BOOST_ASSERT(entry->getInterest().getProducerUid().compare(0, nteNameLen,
                    interest.getProducerUid(), 0, nteNameLen) == 0);
       // compare implicit digest (or its absence) only
       return entry->getInterest().getProducerUid().compare(nteNameLen, Name::npos,
@@ -169,7 +169,7 @@ Pit::findOrInsertByPuid(const Interest& interest, bool allowInsert)
   //Newly added coded to drop Interests 
   auto entry = make_shared<pit::Entry>(interest);
 
-  if((sizeof(pit::Entry) * m_nItems) < 144000){  // 1 entry = 144 byte
+  if((sizeof(pit::Entry) * m_nItems) < 144000000){  // 1 entry = 144 byte
     nte->insertPitEntry(entry);
     m_nItems++;
   } else {

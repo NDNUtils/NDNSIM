@@ -216,6 +216,10 @@ public: // matching
   findAllMatches(const Name& prefix,
                  const name_tree::EntrySelector& entrySelector = name_tree::AnyEntry()) const;
 
+  boost::iterator_range<const_iterator>
+  findAllMatchesByPuid(const Name& prefix,
+                 const name_tree::EntrySelector& entrySelector = name_tree::AnyEntry()) const;
+
 public: // enumeration
   /** \brief Enumerate all entries, optionally filtered by an EntrySelector.
    *  \return an unspecified type that have .begin() and .end() methods

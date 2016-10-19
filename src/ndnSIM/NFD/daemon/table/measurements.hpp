@@ -93,11 +93,17 @@ public:
   shared_ptr<measurements::Entry>
   get(const pit::Entry& pitEntry);
 
+  shared_ptr<measurements::Entry>
+  getByPuid(const pit::Entry& pitEntry);
+
   /** \brief find or insert a Measurements entry for child's parent
    *  \retval nullptr if child is the root entry
    */
   shared_ptr<measurements::Entry>
   getParent(const measurements::Entry& child);
+
+  shared_ptr<measurements::Entry>
+  getParentByPuid(const measurements::Entry& child);
 
   /** \brief perform a longest prefix match for \p name
    */

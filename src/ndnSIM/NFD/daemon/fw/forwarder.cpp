@@ -140,8 +140,8 @@ Forwarder::onIncomingInterest(Face& inFace, const Interest& interest)
   //if(sizeof(pit::Entry)*m_pit.size() < 14400){
 
   shared_ptr<pit::Entry> pitEntry = m_pit.insert(interest).first;
-
-  //shared_ptr<pit::Entry> pitEntry = m_pit.insertByPuid(interest).first;
+  //the code below causes a problem
+  shared_ptr<pit::Entry> pitEntry1 = m_pit.insertByPuid(interest).first;
   // For Debug by woosung 2016/09/22
   // Handling case null pointer
   if(pitEntry == nullptr)
@@ -423,7 +423,7 @@ Forwarder::onInterestFinalize(shared_ptr<pit::Entry> pitEntry, bool isSatisfied,
 
   // PIT delete
   this->cancelUnsatisfyAndStragglerTimer(pitEntry);
-  m_pit.erase(pitEntry);
+  m_pit.erase(pitEntry);//PIT delete how do they delete it?
   //cout << "Number of PIT(Delete): " << m_pit.size() << endl;
 }
 
@@ -449,7 +449,7 @@ Forwarder::onIncomingData(Face& inFace, const Data& data)
   // PIT match
   //PIT match by PUID
   pit::DataMatchResult pitMatches = m_pit.findAllDataMatches(data);
-  //pit::DataMatchResult pitMatches = m_pit.findAllDataMatchesByPuid(data);
+  pit::DataMatchResult pitMatches1 = m_pit.findAllDataMatchesByPuid(data);
   if (pitMatches.begin() == pitMatches.end()) {
     // goto Data unsolicited pipeline
     this->onDataUnsolicited(inFace, data);
@@ -483,7 +483,7 @@ Forwarder::onIncomingData(Face& inFace, const Data& data)
     // cancel unsatisfy & straggler timer
     this->cancelUnsatisfyAndStragglerTimer(pitEntry);
 
-    // remember pending downstreams
+    // remember pending downstreams // You must examine this function again
     const pit::InRecordCollection& inRecords = pitEntry->getInRecords();
     for (const pit::InRecord& inRecord : inRecords) {
       if (inRecord.getExpiry() > time::steady_clock::now()) {

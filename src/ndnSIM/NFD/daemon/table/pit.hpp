@@ -67,6 +67,9 @@ public:
   shared_ptr<pit::Entry>
   find(const Interest& interest) const;
 
+  shared_ptr<pit::Entry>
+  findByPuid(const Interest& interest) const;
+
   /** \brief inserts a PIT entry for Interest
    *  \param interest the Interest; must be created with make_shared
    *  \return a new or existing entry with same Name and Selectors,
@@ -195,6 +198,12 @@ inline shared_ptr<pit::Entry>
 Pit::find(const Interest& interest) const
 {
   return const_cast<Pit*>(this)->findOrInsert(interest, false).first;
+}
+
+inline shared_ptr<pit::Entry>
+Pit::findByPuid(const Interest& interest) const
+{
+  return const_cast<Pit*>(this)->findOrInsertByPuid(interest, false).first;
 }
 
 inline std::pair<shared_ptr<pit::Entry>, bool>
