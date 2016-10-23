@@ -212,6 +212,93 @@ Interest::matchesData(const Data& data) const
   return true;
 }
 
+bool
+Interest::matchesDataByPuid(const Data& data) const
+{
+  //size_t interestNameLength = m_name.size();
+  size_t interestNameLength = m_ProducerUid.size();
+  //const Name& dataName = data.getName();
+  const Name& dataNamePuid = data.getProducerUid();
+  size_t fullNameLength = dataNamePuid.size() + 1;
+
+  // check MinSuffixComponents
+  bool hasMinSuffixComponents = getMinSuffixComponents() >= 0;
+  size_t minSuffixComponents = hasMinSuffixComponents ?
+                               static_cast<size_t>(getMinSuffixComponents()) : 0;
+  if (!(interestNameLength + minSuffixComponents <= fullNameLength))
+    return false;
+
+  // check MaxSuffixComponents
+  bool hasMaxSuffixComponents = getMaxSuffixComponents() >= 0;
+  if (hasMaxSuffixComponents &&
+      !(interestNameLength + getMaxSuffixComponents() >= fullNameLength))
+    return false;
+
+  // check prefix
+  if (interestNameLength == fullNameLength) {
+    if (m_ProducerUid.get(-1).isImplicitSha256Digest()) {
+      if (m_ProducerUid != data.getFullProducerUid())
+        return false;
+    }
+    else {
+      // Interest Name is same length as Data full Name, but last component isn't digest
+      // so there's no possibility of matching
+      return false;
+    }
+  }
+  else {
+    // Interest Name is a strict prefix of Data full Name
+    if (!m_name.isPrefixOf(dataNamePuid))
+      return false;
+  }
+
+  // check Exclude
+  // Exclude won't be violated if Interest Name is same as Data full Name
+  if (!getExclude().empty() && fullNameLength > interestNameLength) {
+    if (interestNameLength == fullNameLength - 1) {
+      // component to exclude is the digest
+      if (getExclude().isExcluded(data.getProducerUid().get(interestNameLength)))
+        return false;
+      // There's opportunity to inspect the Exclude filter and determine whether
+      // the digest would make a difference.
+      // eg. "<NameComponent>AA</NameComponent><Any/>" doesn't exclude any digest -
+      //     fullName not needed;
+      //     "<Any/><NameComponent>AA</NameComponent>" and
+      //     "<Any/><ImplicitSha256DigestComponent>ffffffffffffffffffffffffffffffff
+      //      </ImplicitSha256DigestComponent>"
+      //     excludes all digests - fullName not needed;
+      //     "<Any/><ImplicitSha256DigestComponent>80000000000000000000000000000000
+      //      </ImplicitSha256DigestComponent>"
+      //     excludes some digests - fullName required
+      // But Interests that contain the exact Data Name before digest and also
+      // contain Exclude filter is too rare to optimize for, so we request
+      // fullName no mater what's in the Exclude filter.
+    }
+    else {
+      // component to exclude is not the digest
+      if (getExclude().isExcluded(dataNamePuid.get(interestNameLength)))
+        return false;
+    }
+  }
+
+  // check PublisherPublicKeyLocator
+  const KeyLocator& publisherPublicKeyLocator = this->getPublisherPublicKeyLocator();
+  if (!publisherPublicKeyLocator.empty()) {
+    const Signature& signature = data.getSignature();
+    const Block& signatureInfo = signature.getInfo();
+    Block::element_const_iterator it = signatureInfo.find(tlv::KeyLocator);
+    if (it == signatureInfo.elements_end()) {
+      return false;
+    }
+    if (publisherPublicKeyLocator.wireEncode() != *it) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+
 template<encoding::Tag TAG>
 size_t
 Interest::wireEncode(EncodingImpl<TAG>& encoder) const

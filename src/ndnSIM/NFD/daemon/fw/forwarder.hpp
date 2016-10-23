@@ -241,10 +241,17 @@ PROTECTED_WITH_TESTS_ELSE_PRIVATE:
 #ifdef WITH_TESTS
   virtual void
   dispatchToStrategy(shared_ptr<pit::Entry> pitEntry, function<void(fw::Strategy*)> trigger);
+  
+  virtual void
+  dispatchToStrategyPuid(shared_ptr<pit::Entry> pitEntry, function<void(fw::Strategy*)> trigger);
 #else
   template<class Function>
   void
   dispatchToStrategy(shared_ptr<pit::Entry> pitEntry, Function trigger);
+  
+  template<class Function>
+  void
+  dispatchToStrategyPuid(shared_ptr<pit::Entry> pitEntry, Function trigger);
 #endif
 
 private:
@@ -350,17 +357,38 @@ Forwarder::setCsFromNdnSim(ns3::Ptr<ns3::ndn::ContentStore> cs)
 }
 
 #ifdef WITH_TESTS
+
 inline void
 Forwarder::dispatchToStrategy(shared_ptr<pit::Entry> pitEntry, function<void(fw::Strategy*)> trigger)
-#else
-template<class Function>
-inline void
-Forwarder::dispatchToStrategy(shared_ptr<pit::Entry> pitEntry, Function trigger)
-#endif
 {
   fw::Strategy& strategy = m_strategyChoice.findEffectiveStrategy(*pitEntry);
   trigger(&strategy);
 }
+
+inline void
+Forwarder::dispatchToStrategyPuid(shared_ptr<pit::Entry> pitEntry, function<void(fw::Strategy*)> trigger)
+{
+  fw::Strategy& strategy = m_strategyChoice.findEffectiveStrategyPuid(*pitEntry);
+  trigger(&strategy);
+}
+#else
+template<class Function>
+inline void
+Forwarder::dispatchToStrategy(shared_ptr<pit::Entry> pitEntry, Function trigger)
+{
+  fw::Strategy& strategy = m_strategyChoice.findEffectiveStrategy(*pitEntry);
+  trigger(&strategy);
+}
+
+template<class Function>
+inline void
+Forwarder::dispatchToStrategyPuid(shared_ptr<pit::Entry> pitEntry, Function trigger)
+{
+  fw::Strategy& strategy = m_strategyChoice.findEffectiveStrategyPuid(*pitEntry);
+  trigger(&strategy);
+}
+#endif
+
 
 } // namespace nfd
 

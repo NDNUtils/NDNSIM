@@ -138,6 +138,8 @@ void
 Data::wireDecode(const Block& wire)
 {
   m_fullName.clear();
+  //ProducerUid clear
+  m_fullProducerUid.clear();
   m_wire = wire;
   m_wire.parse();
 
@@ -146,6 +148,7 @@ Data::wireDecode(const Block& wire)
   //            MetaInfo
   //            Content
   //            Signature
+  //            Puid added
 
   // Name
   m_name.wireDecode(m_wire.get(tlv::Name));
@@ -204,6 +207,23 @@ Data::getFullName() const
 
   return m_fullName;
 }
+
+const Name&
+Data::getFullProducerUid() const
+{
+  if (m_fullProducerUid.empty()) {
+    if (!m_wire.hasWire()) {
+      BOOST_THROW_EXCEPTION(Error("Full name requested, but Data packet does not have wire format "
+                                  "(e.g., not signed)"));
+    }
+    m_fullProducerUid = m_producerUid;
+    m_fullProducerUid.appendImplicitSha256Digest(crypto::sha256(m_wire.wire(), m_wire.size()));
+  }
+
+  return m_fullProducerUid;
+}
+
+
 
 Data&
 Data::setMetaInfo(const MetaInfo& metaInfo)
@@ -325,6 +345,7 @@ Data::onChanged()
 
   m_wire.reset();
   m_fullName.clear();
+  m_fullProducerUid.clear();
 }
 
 bool

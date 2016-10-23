@@ -140,9 +140,9 @@ std::pair<shared_ptr<pit::Entry>, bool>
 Pit::findOrInsertByPuid(const Interest& interest, bool allowInsert)
 {
   // ensure NameTree entry exists
-  const Name& name = interest.getProducerUid();
-  bool isEndWithDigest = name.size() > 0 && name[-1].isImplicitSha256Digest();
-  shared_ptr<name_tree::Entry> nte = m_nameTree.lookup(isEndWithDigest ? name.getPrefix(-1) : name);
+  const Name& namePuid = interest.getProducerUid();
+  bool isEndWithDigest = namePuid.size() > 0 && namePuid[-1].isImplicitSha256Digest();
+  shared_ptr<name_tree::Entry> nte = m_nameTree.lookup(isEndWithDigest ? namePuid.getPrefix(-1) : namePuid);
   BOOST_ASSERT(nte != nullptr);
   size_t nteNameLen = nte->getPrefix().size();
 
@@ -233,7 +233,7 @@ Pit::findAllDataMatchesByPuid(const Data& data) const
   pit::DataMatchResult matches;
   for (const name_tree::Entry& nte : ntMatches) {
     for (const shared_ptr<pit::Entry>& pitEntry : nte.getPitEntries()) {
-      if (pitEntry->getInterest().matchesData(data))
+      if (pitEntry->getInterest().matchesDataByPuid(data))
         matches.emplace_back(pitEntry);
     }
   }

@@ -220,6 +220,9 @@ public: // matching
   bool
   matchesData(const Data& data) const;
 
+  bool
+  matchesDataByPuid(const Data& data) const;
+
 public: // Name and guiders
   const Name&
   getName() const

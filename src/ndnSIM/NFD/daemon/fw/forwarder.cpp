@@ -105,7 +105,7 @@ Forwarder::startProcessNack(Face& face, const lp::Nack& nack)
   this->onIncomingNack(face, nack);
 }
 
-//This function is changed due to insertion of PUID insert in PIT.. Added by inchan oct. 18th, 2016
+//This function is changed due to insertion of PUID to PIT.. Added by inchan oct. 18th, 2016
 void
 Forwarder::onIncomingInterest(Face& inFace, const Interest& interest)
 {
@@ -286,7 +286,9 @@ Forwarder::onContentStoreMiss(const Face& inFace,
 
   // dispatch to strategy
   BOOST_ASSERT(fibEntry != nullptr);
-  this->dispatchToStrategy(pitEntry, bind(&Strategy::afterReceiveInterest, _1,
+  /*this->dispatchToStrategy(pitEntry, bind(&Strategy::afterReceiveInterest, _1,
+                                          cref(inFace), cref(interest), fibEntry, pitEntry));*/
+  this->dispatchToStrategyPuid(pitEntry, bind(&Strategy::afterReceiveInterest, _1,
                                           cref(inFace), cref(interest), fibEntry, pitEntry));
 }
 
@@ -447,7 +449,7 @@ Forwarder::onIncomingData(Face& inFace, const Data& data)
   }
 
   // PIT match
-  //PIT match by PUID
+  //PIT match by PUID may cause a problem
   pit::DataMatchResult pitMatches = m_pit.findAllDataMatches(data);
   pit::DataMatchResult pitMatches1 = m_pit.findAllDataMatchesByPuid(data);
   if (pitMatches.begin() == pitMatches.end()) {

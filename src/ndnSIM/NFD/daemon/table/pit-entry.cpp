@@ -82,6 +82,8 @@ Entry::canForwardTo(const Face& face) const
   return !this->violatesScope(face);
 }
 
+
+//Sc
 bool
 Entry::violatesScope(const Face& face) const
 {

@@ -200,6 +200,15 @@ StrategyChoice::findEffectiveStrategy(const pit::Entry& pitEntry) const
 }
 
 Strategy&
+StrategyChoice::findEffectiveStrategyPuid(const pit::Entry& pitEntry) const
+{
+  shared_ptr<name_tree::Entry> nte = m_nameTree.getByPuid(pitEntry);
+
+  BOOST_ASSERT(static_cast<bool>(nte));
+  return this->findEffectiveStrategy(nte);
+}
+
+Strategy&
 StrategyChoice::findEffectiveStrategy(const measurements::Entry& measurementsEntry) const
 {
   shared_ptr<name_tree::Entry> nte = m_nameTree.get(measurementsEntry);

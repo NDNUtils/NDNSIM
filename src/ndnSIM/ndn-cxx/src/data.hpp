@@ -169,6 +169,10 @@ public:
   const Name&
   getFullName() const;
 
+
+  const Name&
+  getFullProducerUid() const;
+
   /**
    * @brief Get MetaInfo block from Data packet
    */
@@ -354,6 +358,8 @@ private:
 
   mutable Block m_wire;
   mutable Name m_fullName;
+  mutable Name m_fullProducerUid;
+  
 };
 
 std::ostream&
