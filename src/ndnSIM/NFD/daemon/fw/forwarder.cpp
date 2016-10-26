@@ -139,9 +139,9 @@ Forwarder::onIncomingInterest(Face& inFace, const Interest& interest)
   //After PIT size calculation, it judges whether to insert an Interest or not   
   //if(sizeof(pit::Entry)*m_pit.size() < 14400){
 
-  shared_ptr<pit::Entry> pitEntry = m_pit.insert(interest).first;
+  //shared_ptr<pit::Entry> pitEntry = m_pit.insert(interest).first;
   //the code below causes a problem
-  shared_ptr<pit::Entry> pitEntry1 = m_pit.insertByPuid(interest).first;
+  shared_ptr<pit::Entry> pitEntry = m_pit.insertByPuid(interest).first;
   // For Debug by woosung 2016/09/22
   // Handling case null pointer
   if(pitEntry == nullptr)
@@ -301,7 +301,8 @@ Forwarder::onContentStoreHit(const Face& inFace,
   NFD_LOG_DEBUG("onContentStoreHit interest=" << interest.getName());
 
   beforeSatisfyInterest(*pitEntry, *m_csFace, data);
-  this->dispatchToStrategy(pitEntry, bind(&Strategy::beforeSatisfyInterest, _1,
+  //Changed to PUID functions 
+  this->dispatchToStrategyPuid(pitEntry, bind(&Strategy::beforeSatisfyInterest, _1,
                                           pitEntry, cref(*m_csFace), cref(data)));
 
   data.setTag(make_shared<lp::IncomingFaceIdTag>(face::FACEID_CONTENT_STORE));
@@ -406,7 +407,8 @@ Forwarder::onInterestUnsatisfied(shared_ptr<pit::Entry> pitEntry)
 
   // invoke PIT unsatisfied callback
   beforeExpirePendingInterest(*pitEntry);
-  this->dispatchToStrategy(pitEntry, bind(&Strategy::beforeExpirePendingInterest, _1,
+  //Changed to PUID function
+  this->dispatchToStrategyPuid(pitEntry, bind(&Strategy::beforeExpirePendingInterest, _1,
                                           pitEntry));
 
   // goto Interest Finalize pipeline
@@ -450,8 +452,8 @@ Forwarder::onIncomingData(Face& inFace, const Data& data)
 
   // PIT match
   //PIT match by PUID may cause a problem
-  pit::DataMatchResult pitMatches = m_pit.findAllDataMatches(data);
-  pit::DataMatchResult pitMatches1 = m_pit.findAllDataMatchesByPuid(data);
+  //pit::DataMatchResult pitMatches = m_pit.findAllDataMatches(data);
+  pit::DataMatchResult pitMatches = m_pit.findAllDataMatchesByPuid(data);
   if (pitMatches.begin() == pitMatches.end()) {
     // goto Data unsolicited pipeline
     this->onDataUnsolicited(inFace, data);
@@ -495,7 +497,7 @@ Forwarder::onIncomingData(Face& inFace, const Data& data)
 
     // invoke PIT satisfy callback
     beforeSatisfyInterest(*pitEntry, inFace, data);
-    this->dispatchToStrategy(pitEntry, bind(&Strategy::beforeSatisfyInterest, _1,
+    this->dispatchToStrategyPuid(pitEntry, bind(&Strategy::beforeSatisfyInterest, _1,
                                             pitEntry, cref(inFace), cref(data)));
 
     // Dead Nonce List insert if necessary (for OutRecord of inFace)
@@ -624,7 +626,7 @@ Forwarder::onIncomingNack(Face& inFace, const lp::Nack& nack)
 
   // trigger strategy: after receive NACK
   shared_ptr<fib::Entry> fibEntry = m_fib.findLongestPrefixMatch(*pitEntry);
-  this->dispatchToStrategy(pitEntry, bind(&Strategy::afterReceiveNack, _1,
+  this->dispatchToStrategyPuid(pitEntry, bind(&Strategy::afterReceiveNack, _1,
                                           cref(inFace), cref(nack), fibEntry, pitEntry));
 }
 
