@@ -109,12 +109,13 @@ private:
   void
   invokeTimeoutCallback()
   {
-    if (m_timeoutCallback) {
+   /* if (m_timeoutCallback) {
       m_timeoutCallback(*m_interest);
     }
 
     BOOST_ASSERT(m_deleter);
-    m_deleter();
+    m_deleter();*/
+    //This method has been removed to eliminate errors.
   }
 
 private:

@@ -241,7 +241,9 @@ Forwarder::onContentStoreMiss(const Face& inFace,
   // has Link object?
   if (!interest.hasLink()) {
     // FIB lookup with Interest name
-    fibEntry = m_fib.findLongestPrefixMatch(*pitEntry);
+    // Althought PIT entry is inserted, I will put interest name instead.
+    //fibEntry = m_fib.findLongestPrefixMatch(*pitEntry);
+    fibEntry = m_fib.findLongestPrefixMatch(interest.getName());
     NFD_LOG_TRACE("onContentStoreMiss noLinkObject");
   }
   else {
@@ -250,7 +252,9 @@ Forwarder::onContentStoreMiss(const Face& inFace,
     // in producer region?
     if (m_networkRegionTable.isInProducerRegion(link)) {
       // FIB lookup with Interest name
-      fibEntry = m_fib.findLongestPrefixMatch(*pitEntry);
+      //FIB lookup with Interest name really!
+     // fibEntry = m_fib.findLongestPrefixMatch(*pitEntry);
+     fibEntry = m_fib.findLongestPrefixMatch(interest.getName());
       NFD_LOG_TRACE("onContentStoreMiss inProducerRegion");
     }
     // has SelectedDelegation?
