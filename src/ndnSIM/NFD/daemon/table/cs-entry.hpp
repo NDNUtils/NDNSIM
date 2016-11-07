@@ -108,6 +108,9 @@ public: // exposed through ContentStore enumeration
   bool
   canSatisfy(const Interest& interest) const;
 
+  bool
+  canSatisfyPuid(const Interest& interest) const;
+
 public: // used by generic ContentStore implementation
   /** \return true if a Data packet is stored
    */

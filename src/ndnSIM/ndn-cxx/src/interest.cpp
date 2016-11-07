@@ -248,13 +248,13 @@ Interest::matchesDataByPuid(const Data& data) const
   }
   else {
     // Interest Name is a strict prefix of Data full Name
-    if (!m_name.isPrefixOf(dataNamePuid))
+    if (!m_ProducerUid.isPrefixOf(dataNamePuid))
       return false;
   }
 
   // check Exclude
   // Exclude won't be violated if Interest Name is same as Data full Name
-  if (!getExclude().empty() && fullNameLength > interestNameLength) {
+  /* if (!getExclude().empty() && fullNameLength > interestNameLength) {
     if (interestNameLength == fullNameLength - 1) {
       // component to exclude is the digest
       if (getExclude().isExcluded(data.getProducerUid().get(interestNameLength)))
@@ -279,7 +279,7 @@ Interest::matchesDataByPuid(const Data& data) const
       if (getExclude().isExcluded(dataNamePuid.get(interestNameLength)))
         return false;
     }
-  }
+  }*/
 
   // check PublisherPublicKeyLocator
   const KeyLocator& publisherPublicKeyLocator = this->getPublisherPublicKeyLocator();

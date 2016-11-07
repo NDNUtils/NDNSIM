@@ -120,6 +120,8 @@ Cs::insert(const Data& data, bool isUnsolicited)
 
 
 //insertByPuid Not a name is mentioned here. You must find where to insert PUID rather than full NDN name. Look carefully at Table.cpp/table.hpp
+//They are nothing really different
+
 void
 Cs::insertPuid(const Data& data, bool isUnsolicited)
 {
@@ -198,7 +200,7 @@ Cs::find(const Interest& interest,
   hitCallback(interest, match->getData());
 }
 
-//find by Puid
+//find by Puid is something different
 void
 Cs::findPuid(const Interest& interest,
          const HitCallback& hitCallback,
@@ -287,8 +289,8 @@ Cs::findRightmostPuid(const Interest& interest, iterator first, iterator last) c
 
     // special case: [first,prev] have exact Names
     if (prev->getProducerUid().size() == interestNameLength) {
-      NFD_LOG_TRACE("  find-among-exact " << prev->getName());
-      iterator matchExact = this->findRightmostAmongExact(interest, first, right);
+      NFD_LOG_TRACE("  find-among-exact " << prev->getProducerUid());
+      iterator matchExact = this->findRightmostAmongExactPuid(interest, first, right);
       return matchExact == right ? last : matchExact;
     }
 
@@ -313,6 +315,13 @@ Cs::findRightmostAmongExact(const Interest& interest, iterator first, iterator l
 {
   return find_last_if(first, last, bind(&EntryImpl::canSatisfy, _1, interest));
 }
+
+iterator
+Cs::findRightmostAmongExactPuid(const Interest& interest, iterator first, iterator last) const
+{
+  return find_last_if(first, last, bind(&EntryImpl::canSatisfyPuid, _1, interest));
+}
+
 
 void
 Cs::setPolicyImpl(unique_ptr<Policy>& policy)

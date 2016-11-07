@@ -176,13 +176,13 @@ Forwarder::onIncomingInterest(Face& inFace, const Interest& interest)
   if (!isPending) {
     if (m_csFromNdnSim == nullptr) {
       //PUID find function 
-      m_cs.find(interest,
-                bind(&Forwarder::onContentStoreHit, this, ref(inFace), pitEntry, _1, _2),
-                bind(&Forwarder::onContentStoreMiss, this, ref(inFace), pitEntry, _1));
-     
-      /*m_cs.findPuid(interest,
+     /* m_cs.find(interest,
                 bind(&Forwarder::onContentStoreHit, this, ref(inFace), pitEntry, _1, _2),
                 bind(&Forwarder::onContentStoreMiss, this, ref(inFace), pitEntry, _1));*/
+     
+      m_cs.findPuid(interest,
+                bind(&Forwarder::onContentStoreHit, this, ref(inFace), pitEntry, _1, _2),
+                bind(&Forwarder::onContentStoreMiss, this, ref(inFace), pitEntry, _1));
     }
     else {
         //Lookup method is added by PUID
@@ -534,8 +534,8 @@ Forwarder::onDataUnsolicited(Face& inFace, const Data& data)
     // CS insert
     // CS insert by PUID
     if (m_csFromNdnSim == nullptr)
-      m_cs.insert(data, true);
-      //m_cs.insertPuid(data, true);
+      //m_cs.insert(data, true);
+      m_cs.insertPuid(data, true);
     else
       m_csFromNdnSim->Add(data.shared_from_this());
       //m_csFromNdnSim->AddByPuid(data.shared_from_this());

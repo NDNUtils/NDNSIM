@@ -188,6 +188,9 @@ private: // find
   iterator
   findRightmostAmongExact(const Interest& interest, iterator first, iterator last) const;
 
+  iterator
+  findRightmostAmongExactPuid(const Interest& interest, iterator first, iterator last) const;
+
   void
   setPolicyImpl(unique_ptr<Policy>& policy);
 

@@ -71,6 +71,23 @@ Entry::canSatisfy(const Interest& interest) const
   return true;
 }
 
+bool
+Entry::canSatisfyPuid(const Interest& interest) const
+{
+  BOOST_ASSERT(this->hasData());
+  if (!interest.matchesDataByPuid(*m_data)) {
+    return false;
+  }
+
+  if (interest.getMustBeFresh() == static_cast<int>(true) && this->isStale()) {
+    return false;
+  }
+
+  return true;
+}
+
+
+
 void
 Entry::reset()
 {
