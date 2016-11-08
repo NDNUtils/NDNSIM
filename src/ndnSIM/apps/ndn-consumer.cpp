@@ -55,6 +55,10 @@ Consumer::GetTypeId(void)
 
       .AddAttribute("Prefix", "Name of the Interest", StringValue("/"),
                     MakeNameAccessor(&Consumer::m_interestName), MakeNameChecker())
+
+      .AddAttribute("Puid", "Puid of the Interest to the Producer", StringValue("/"),
+                    MakeNameAccessor(&Consumer::m_puid), MakeNameChecker())
+
       .AddAttribute("LifeTime", "LifeTime for interest packet", StringValue("2s"),
                     MakeTimeAccessor(&Consumer::m_interestLifeTime), MakeTimeChecker())
 
@@ -185,9 +189,9 @@ Consumer::SendPacket()
   nameWithSequence->appendSequenceNumber(seq);
 
   //Add PUID number and add sequence number.
-  Name myName;
-  myName.append("AB");
-  shared_ptr<Name> uidName = make_shared<Name>(myName);
+  /*Name myName;
+  myName.append("AB");*/
+  shared_ptr<Name> uidName = make_shared<Name>(m_puid);
   uidName->appendSequenceNumber(seq); 
   //
 

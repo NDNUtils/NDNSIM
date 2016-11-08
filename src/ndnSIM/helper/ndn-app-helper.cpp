@@ -45,6 +45,12 @@ AppHelper::SetPrefix(const std::string& prefix)
 }
 
 void
+AppHelper::SetPuid(const std::string& puid)
+{
+  m_factory.Set("Puid", StringValue(puid));
+}
+
+void
 AppHelper::SetAttribute(std::string name, const AttributeValue& value)
 {
   m_factory.Set(name, value);

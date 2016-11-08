@@ -51,6 +51,9 @@ public:
   void
   SetPrefix(const std::string& prefix);
 
+  void
+  SetPuid(const std::string& puid);
+
   /**
    * \brief Helper function used to set the underlying application attributes.
    *

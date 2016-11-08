@@ -65,6 +65,7 @@ Pit::Pit(NameTree& nameTree)
 Pit::~Pit()
 {
         std::cout << "m_droppedPackets = " << m_droppedPackets << std::endl;
+        std::cout << "m_nameTree size = " << m_nameTree.size() << std::endl;
 }
 
 std::pair<shared_ptr<pit::Entry>, bool>
