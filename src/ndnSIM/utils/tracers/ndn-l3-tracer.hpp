@@ -116,7 +116,8 @@ protected:
 
       m_outSatisfiedInterests = 0;
       m_outTimedOutInterests = 0;
-      m_pitsize = 0;
+      m_pitSize = 0;
+      m_nametreeSize = 0;
     }
 
     double m_inInterests;
@@ -127,7 +128,8 @@ protected:
     double m_timedOutInterests;
     double m_outSatisfiedInterests;
     double m_outTimedOutInterests;
-    double m_pitsize;
+    double m_pitSize;
+    double m_nametreeSize;
   };
 };
 
