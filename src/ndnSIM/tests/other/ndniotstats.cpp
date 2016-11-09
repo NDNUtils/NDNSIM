@@ -236,14 +236,17 @@ Tester::run(int argc, char* argv[])
   ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
   // Consumer will request /prefix/0, /prefix/1, ...
   consumerHelper.SetPrefix(prefixP1);
+  consumerHelper.SetPuid("A1");
   consumerHelper.SetAttribute("Frequency", DoubleValue(m_interestRate));
   consumerHelper.Install(consumer1); // first node
 
   consumerHelper.SetPrefix(prefixP2);
+  consumerHelper.SetPuid("A2");
   consumerHelper.SetAttribute("Frequency", DoubleValue(m_interestRate));
   consumerHelper.Install(consumer2);
 
   consumerHelper.SetPrefix(prefixP3);
+  consumerHelper.SetPuid("A3");
   consumerHelper.SetAttribute("Frequency", DoubleValue(m_interestRate));
   consumerHelper.Install(consumer3);
 
