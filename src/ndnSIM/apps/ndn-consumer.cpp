@@ -201,8 +201,8 @@ Consumer::SendPacket()
   interest->setName(*nameWithSequence);
 
   interest->setProducerUid(*uidName);
-  std::cout << "PUID name " << *uidName << std::endl;
-  std::cout << "NDN name " << *nameWithSequence << std::endl;
+  //std::cout << "PUID name " << *uidName << std::endl;
+  //std::cout << "NDN name " << *nameWithSequence << std::endl;
   //interest->setProducerUid("/AB");
   //std::cout << interest->getProducerUid() << std::endl;
   
@@ -231,7 +231,7 @@ Consumer::OnData(shared_ptr<const Data> data)
     return;
 
   if(!data->getProducerUid().empty()){
-     std::cout << "Producer UID arrived in consumer : " << data->getProducerUid() << std::endl;
+     //std::cout << "Producer UID arrived in consumer : " << data->getProducerUid() << std::endl;
   }
 
   App::OnData(data); // tracing inside

@@ -146,7 +146,7 @@ Forwarder::onIncomingInterest(Face& inFace, const Interest& interest)
   // Handling case null pointer
   if(pitEntry == nullptr)
   {
-    std::cout << "Cannot aloocate PIT Table Entry for interest!!." << std::endl;
+    //std::cout << "Cannot aloocate PIT Table Entry for interest!!." << std::endl;
     return;
   }
 

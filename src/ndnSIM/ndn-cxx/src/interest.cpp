@@ -460,7 +460,7 @@ Interest::wireDecode(const Block& wire)
   Block::element_const_iterator pUid = m_wire.find(tlv::ProducerUid);
   if (pUid != m_wire.elements_end()) {
     m_ProducerUid.wirePuidDecode(*pUid);
-    std::cout << __FUNCTION__ << "(" << __LINE__ << ")" << "Get Producer UID..." << std::endl;
+   // std::cout << __FUNCTION__ << "(" << __LINE__ << ")" << "Get Producer UID..." << std::endl;
   }
   else
   {

@@ -409,9 +409,9 @@ class SimulationThread(threading.Thread):
 
 
 
-                    text = "Ndn PIT for node %i : PIT counts : %i" %(nodeI, ndnPitsize)
+                   ## text = "Ndn PIT for node %i : PIT counts : %i" %(nodeI, ndnPitsize)
                     #textDropInter = "Dropped Interests for node %i : %i" %(nodeI, missingPackets)
-                    print text
+                    ##print text
                     #print textDropInter
 
 

@@ -64,8 +64,8 @@ Pit::Pit(NameTree& nameTree)
 
 Pit::~Pit()
 {
-        std::cout << "m_droppedPackets = " << m_droppedPackets << std::endl;
-        std::cout << "m_nameTree size = " << m_nameTree.size() << std::endl;
+        //std::cout << "m_droppedPackets = " << m_droppedPackets << std::endl;
+       // std::cout << "m_nameTree size = " << m_nameTree.size() << std::endl;
 }
 
 std::pair<shared_ptr<pit::Entry>, bool>
@@ -82,7 +82,7 @@ Pit::findOrInsert(const Interest& interest, bool allowInsert)
   // A pit entry size is 144.
   // total size 14400 for 100 entries.
   const std::vector<shared_ptr<pit::Entry>>& pitEntries = nte->getPitEntries();
-  cout << "Size of PIT entries : " << (sizeof(pit::Entry) * m_nItems) << endl;
+  //cout << "Size of PIT entries : " << (sizeof(pit::Entry) * m_nItems) << endl;
   auto it = std::find_if(pitEntries.begin(), pitEntries.end(),
     [&interest, nteNameLen] (const shared_ptr<pit::Entry>& entry) -> bool {
       // initial part of the name is guaranteed to be the same
@@ -101,7 +101,7 @@ Pit::findOrInsert(const Interest& interest, bool allowInsert)
   //Newly added coded to drop Interests 
   auto entry = make_shared<pit::Entry>(interest);
 
-  if((sizeof(pit::Entry) * m_nItems) < 144000){  // 1 entry = 144 byte
+  if((sizeof(pit::Entry) * m_nItems) < 14400000){  // 1 entry = 144 byte
     nte->insertPitEntry(entry);
     m_nItems++;
   } else {
@@ -151,7 +151,7 @@ Pit::findOrInsertByPuid(const Interest& interest, bool allowInsert)
   // A pit entry size is 144.
   // total size 14400 for 100 entries.
   const std::vector<shared_ptr<pit::Entry>>& pitEntries = nte->getPitEntries();
-  cout << "Size of PIT entries : " << (sizeof(pit::Entry) * m_nItems) << endl;
+  //cout << "Size of PIT entries : " << (sizeof(pit::Entry) * m_nItems) << endl;
   auto it = std::find_if(pitEntries.begin(), pitEntries.end(),
     [&interest, nteNameLen] (const shared_ptr<pit::Entry>& entry) -> bool {
       // initial part of the name is guaranteed to be the same
