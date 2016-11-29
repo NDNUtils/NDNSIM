@@ -64,8 +64,8 @@ public:
    *  \param interest the Interest
    *  \return an existing entry with same Name and Selectors; otherwise nullptr
    */
-  shared_ptr<pit::Entry>
-  find(const Interest& interest) const;
+  /*shared_ptr<pit::Entry>
+  find(const Interest& interest) const;*/
 
   shared_ptr<pit::Entry>
   findByPuid(const Interest& interest) const;
@@ -76,10 +76,10 @@ public:
    *          and true for new entry, false for existing entry
    */
   
-
+/*
   std::pair<shared_ptr<pit::Entry>, bool>
   insert(const Interest& interest);
-
+*/
 
   //InsertByPuid added
   std::pair<shared_ptr<pit::Entry>, bool>
@@ -88,8 +88,8 @@ public:
   /** \brief performs a Data match
    *  \return an iterable of all PIT entries matching data
    */
-  pit::DataMatchResult
-  findAllDataMatches(const Data& data) const;
+ /* pit::DataMatchResult
+  findAllDataMatches(const Data& data) const;*/
 
   pit::DataMatchResult
   findAllDataMatchesByPuid(const Data& data) const;
@@ -165,8 +165,7 @@ private:
    *          if not allowInsert, an existing entry with same Name+Selectors and false,
    *          or {nullptr, true} if there's no existing entry
    */
-  std::pair<shared_ptr<pit::Entry>, bool>
-  findOrInsert(const Interest& interest, bool allowInsert);
+
 
   std::pair<shared_ptr<pit::Entry>, bool>
   findOrInsertByPuid(const Interest& interest, bool allowInsert);
@@ -194,11 +193,12 @@ Pit::size() const
   return m_nItems;
 }
 
+/*
 inline shared_ptr<pit::Entry>
 Pit::find(const Interest& interest) const
 {
-  return const_cast<Pit*>(this)->findOrInsert(interest, false).first;
-}
+  return const_cast<Pit*>(this)->findOrInsertByPuid(interest, false).first;
+}*/
 
 inline shared_ptr<pit::Entry>
 Pit::findByPuid(const Interest& interest) const
@@ -206,11 +206,12 @@ Pit::findByPuid(const Interest& interest) const
   return const_cast<Pit*>(this)->findOrInsertByPuid(interest, false).first;
 }
 
+/*
 inline std::pair<shared_ptr<pit::Entry>, bool>
 Pit::insert(const Interest& interest)
 {
-  return this->findOrInsert(interest, true);
-}
+  return this->findOrInsertByPuid(interest, true);
+}*/
 
 inline std::pair<shared_ptr<pit::Entry>, bool>
 Pit::insertByPuid(const Interest& interest)

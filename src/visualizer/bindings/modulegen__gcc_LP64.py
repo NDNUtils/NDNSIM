@@ -2401,6 +2401,11 @@ def register_Ns3TypeId_methods(root_module, cls):
                    'std::string', 
                    [], 
                    is_const=True)
+    ## type-id.h (module 'core'): std::string ns3::TypeId::GetName() const [member function]
+    cls.add_method('GetProducerUid', 
+                   'std::string', 
+                   [], 
+                   is_const=True)
     ## type-id.h (module 'core'): ns3::TypeId ns3::TypeId::GetParent() const [member function]
     cls.add_method('GetParent', 
                    'ns3::TypeId', 

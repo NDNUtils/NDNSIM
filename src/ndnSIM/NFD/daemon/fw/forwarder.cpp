@@ -593,7 +593,7 @@ Forwarder::onIncomingNack(Face& inFace, const lp::Nack& nack)
   }
 
   // PIT match
-  shared_ptr<pit::Entry> pitEntry = m_pit.find(nack.getInterest());
+  shared_ptr<pit::Entry> pitEntry = m_pit.findByPuid(nack.getInterest());
   // if no PIT entry found, drop
   if (pitEntry == nullptr) {
     NFD_LOG_DEBUG("onIncomingNack face=" << inFace.getId() <<
@@ -629,7 +629,7 @@ Forwarder::onIncomingNack(Face& inFace, const lp::Nack& nack)
   outRecord->setIncomingNack(nack);
 
   // trigger strategy: after receive NACK
-  shared_ptr<fib::Entry> fibEntry = m_fib.findLongestPrefixMatch(*pitEntry);
+  shared_ptr<fib::Entry> fibEntry = m_fib.findLongestPrefixMatch(nack.getInterest().getName());
   this->dispatchToStrategyPuid(pitEntry, bind(&Strategy::afterReceiveNack, _1,
                                           cref(inFace), cref(nack), fibEntry, pitEntry));
 }

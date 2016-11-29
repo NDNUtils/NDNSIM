@@ -277,6 +277,7 @@ def register_methods(root_module):
         def reg_Entry(cls):
             cls.add_method('getInterest', retval('const ns3::ndn::Interest&'), [], is_const=True)
             cls.add_method('getName', retval('const ns3::ndn::Name&'), [], is_const=True)
+            cls.add_method('getProducerUid', retval('const ns3::ndn::Name&'), [], is_const=True)
         reg_Entry(root_module['ns3::ndn::nfd::pit::Entry'])
     reg_NfdPit(root_module, root_module['ns3::ndn::nfd::Pit'])
     #### PIT ####

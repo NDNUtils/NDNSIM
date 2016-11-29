@@ -73,7 +73,8 @@ class ShowNdnPit(InformationWindow):
         for item in ndnPit:
             tree_iter = self.table_model.append()
             self.table_model.set(tree_iter,
-                                 self.COLUMN_PREFIX, str(item.getName()),
+ 				 self.COLUMN_PREFIX, str(item.getProducerUid()),
+                                 ##self.COLUMN_PREFIX, str(item.getName()),
                                  self.COLUMN_FACE, str(item.getInterest()))
 
 def populate_node_menu(viz, node, menu):
